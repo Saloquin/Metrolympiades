@@ -8,7 +8,6 @@ import VueCal from 'vue-cal'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faCalendar, faClipboard, faUserFriends, faXmark } from '@fortawesome/free-solid-svg-icons'
 
-
 // Enregistrement des éléments nécessaires pour Chart.js
 ChartJS.register(ArcElement, Tooltip, Legend)
 
@@ -86,10 +85,11 @@ const getResultColor = (match) => {
 
 <template>
   <div class="p-6 max-w-4xl mx-auto">
-    <!-- Introduction avec nom et graphique -->
     <div class="flex justify-between items-center mb-8">
       <div>
-        <h1 class="text-3xl font-bold">Bonjour, {{ userStore.currentUser.name }}</h1>
+        <h1 class="text-3xl font-bold theme-secondary">
+          Bonjour, {{ userStore.currentUser.name }}
+        </h1>
         <p class="text-lg text-gray-600">Email: {{ userStore.currentUser?.email }}</p>
       </div>
       <!-- Graphique des résultats -->
@@ -121,14 +121,19 @@ const getResultColor = (match) => {
 
     <!-- Bouton vers "InfoTeam" -->
     <div class="mb-8">
-      <RouterLink to="/team" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center">
+      <RouterLink
+        to="/team"
+        class="px-4 py-2 theme-primary-bg text-white rounded-lg hover:opacity-90 transition-opacity flex items-center"
+      >
         <FontAwesomeIcon :icon="faUserFriends" class="mr-2" />
         Voir Info Team
       </RouterLink>
     </div>
 
-    <!-- Historique des matchs avec bordure -->
-    <h2 class="text-2xl font-bold mb-4 ">Historique des matchs <FontAwesomeIcon :icon="faClipboard"/></h2>
+    <!-- Historique des matchs -->
+    <h2 class="text-2xl font-bold mb-4 theme-secondary">
+      Historique des matchs <FontAwesomeIcon :icon="faClipboard" />
+    </h2>
     <div class="overflow-x-auto border border-gray-300 rounded-lg mb-8">
       <table class="min-w-full table-auto mt-4 border-collapse">
         <thead>
@@ -157,13 +162,15 @@ const getResultColor = (match) => {
 
     <!-- Prochains matchs -->
     <!-- Calendrier des prochains matchs -->
-    <h2 class="text-2xl font-bold mb-4">Calendrier des matchs <FontAwesomeIcon :icon="faCalendar"/></h2>
+    <h2 class="text-2xl font-bold mb-4 theme-secondary">
+      Calendrier des matchs <FontAwesomeIcon :icon="faCalendar" />
+    </h2>
     <div class="border border-gray-300 rounded-lg p-4 mb-8">
       <VueCal
-        style="height: 600px;"
+        style="height: 600px"
         default-view="month"
         :events="calendarEvents"
-        :disable-views="['years', 'year','day']"
+        :disable-views="['years', 'year', 'day']"
         :time-cell-height="22"
         @event-click="openMatchModal"
       />
@@ -179,7 +186,7 @@ const getResultColor = (match) => {
           @click="closeMatchModal"
           class="absolute top-2 right-2 text-gray-500 hover:text-gray-800"
         >
-        <FontAwesomeIcon :icon="faXmark" class="text-2xl" />
+          <FontAwesomeIcon :icon="faXmark" class="text-2xl" />
         </button>
 
         <h3 class="text-2xl font-bold mb-2">Détails du match</h3>
@@ -195,25 +202,25 @@ const getResultColor = (match) => {
 </template>
 
 <style scoped>
-/* Utilise :deep pour forcer l'application du style */
 :deep(.vuecal__event-title),
 :deep(.vuecal__event-time) {
-    font-size: 0.5em; 
+  font-size: 0.5em;
 }
 :deep(.vuecal__event) {
-    border-radius: 0.5em; 
-    background-color: #4F46E5; 
-    color: white; 
+  border-radius: 0.5em;
+  background-color: var(--primary-color);
+  color: white;
 }
 :deep(.vuecal__event:hover) {
-    background-color: #4F46E5; 
-    cursor: pointer; 
+  background-color: var(--primary-color);
+  opacity: 0.9;
+  cursor: pointer;
 }
-:deep(.vuecal__cell-events-count){
-    color: white; 
-    background-color: #4F46E5;
-    position: absolute;
-    top: 6px;
-    right:1px;
+:deep(.vuecal__cell-events-count) {
+  color: white;
+  background-color: var(--primary-color);
+  position: absolute;
+  top: 6px;
+  right: 1px;
 }
 </style>

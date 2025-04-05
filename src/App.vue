@@ -1,9 +1,28 @@
 <script setup>
 import Navbar from './components/Navbar.vue'
+import ThemeSettings from './components/ThemeSettings.vue'
 import { useUserStore } from '@/stores/user'
-const userStore = useUserStore()
-userStore.initializeUser()
+import { useThemeStore } from '@/stores/theme'
+import { onMounted, watch } from 'vue'
 
+const userStore = useUserStore()
+const themeStore = useThemeStore()
+
+onMounted(() => {
+  userStore.initializeUser()
+  if (userStore.isLoggedIn) {
+    themeStore.initializeTheme()
+  } else {
+    themeStore.initializeFontSizeOnly()
+  }
+})
+
+// Watch for login state changes
+watch(() => userStore.isLoggedIn, (isLoggedIn) => {
+  if (isLoggedIn) {
+    themeStore.initializeTheme()
+  }
+})
 </script>
 
 <template>
@@ -12,8 +31,6 @@ userStore.initializeUser()
     <main class="p-4">
       <RouterView />
     </main>
+    <ThemeSettings :showColorSettings="userStore.isLoggedIn" />
   </div>
 </template>
-
-
-

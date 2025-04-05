@@ -1,7 +1,8 @@
 <script setup>
 import { ref } from 'vue'
 import axios from '@/axios'
-import { useUserStore } from '@/stores/user'  // Import du store Pinia
+import { useUserStore } from '@/stores/user'
+import { useThemeStore } from '@/stores/theme'  // Pour le thème
 import { useRouter } from 'vue-router'  // Pour la redirection après connexion
 import { faSignInAlt } from '@fortawesome/free-solid-svg-icons'  // Icône de connexion
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -9,6 +10,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 const email = ref('')
 const password = ref('')
 const userStore = useUserStore()
+const themeStore = useThemeStore()  // Pour le thème
 const router = useRouter()
 
 // Fonction de login
@@ -28,7 +30,7 @@ const login = async () => {
       team: response.data.team,
       token: response.data.token,
     })
-
+    themeStore.initializeTheme()
     // Redirection vers la page de dashboard après connexion
     router.push('/dashboard')
   } catch (error) {
