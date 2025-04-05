@@ -1,7 +1,8 @@
 <script setup>
 import { ref } from 'vue'
 import axios from '@/axios'
-import { useUserStore } from '@/stores/user'  // Import du store Pinia
+import { useUserStore } from '@/stores/user'
+import { useThemeStore } from '@/stores/theme' 
 import { useRouter } from 'vue-router'  // Pour la redirection après inscription
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faBoltLightning } from '@fortawesome/free-solid-svg-icons' // Icône pour les victoires
@@ -11,6 +12,7 @@ const username = ref('')
 const password = ref('')
 const teamName = ref('')
 const userStore = useUserStore()
+const themeStore = useThemeStore()
 const router = useRouter()
 
 // Fonction d'inscription
@@ -32,7 +34,7 @@ const register = async () => {
       team: response.data.team,
       token: response.data.token,
     })
-
+    themeStore.initializeTheme()
     // Redirection vers la page de dashboard après inscription
     router.push('/dashboard')
   } catch (error) {

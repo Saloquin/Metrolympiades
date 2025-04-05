@@ -2,9 +2,50 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --primary-color: #3B82F6;
+  --secondary-color: #EAB308;
+}
+
 html,
 body,
 #app {
   height: 100%;
   width: 100%;
+  outline: none;
+}
+
+/* Font size utilities */
+html[data-font-size="small"] {
+  font-size: 14px;
+}
+
+html[data-font-size="medium"] {
+  font-size: 16px;
+}
+
+html[data-font-size="large"] {
+  font-size: 18px;
+}
+
+/* Theme color utilities */
+.theme-primary {
+  color: var(--primary-color);
+}
+
+.theme-primary-bg {
+  background-color: var(--primary-color);
+}
+
+.theme-secondary {
+  color: var(--secondary-color);
+}
+
+.theme-secondary-bg {
+  background-color: var(--secondary-color);
+}
+
+.ring-primary {
+  --tw-ring-color: var(--primary-color);
+  outline: none;
 }

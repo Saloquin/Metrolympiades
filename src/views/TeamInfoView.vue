@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue'
 import axios from '@/axios'
 import { useUserStore } from '@/stores/user'
-import { faTrophy, faUser,faCogs } from '@fortawesome/free-solid-svg-icons' // Icône pour les victoires
+import { faTrophy, faUser, faCogs } from '@fortawesome/free-solid-svg-icons' // Icône pour les victoires
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 const userStore = useUserStore()
@@ -54,10 +54,10 @@ const calculateVictories = (matches) => {
   <div class="p-6 max-w-4xl mx-auto bg-white rounded-lg shadow-lg">
     <!-- Header avec les informations -->
     <div class="flex justify-between items-center mb-6">
-      <h1 class="text-2xl font-bold text-blue-600 flex items-center">
+      <h1 class="text-2xl font-bold theme-primary flex items-center">
         <FontAwesomeIcon :icon="faUser" class="mr-2" /> Informations sur l'équipe
       </h1>
-      <div class="text-lg font-semibold text-green-600 flex items-center">
+      <div class="text-lg font-semibold theme-secondary flex items-center">
         <FontAwesomeIcon :icon="faTrophy" class="mr-2" />
         <span>Victoires: {{ victories }}</span>
       </div>
@@ -65,7 +65,7 @@ const calculateVictories = (matches) => {
 
     <!-- Section Nom d'équipe -->
     <div class="mt-6">
-      <h2 class="text-xl font-semibold text-gray-700">Nom d'équipe</h2>
+      <h2 class="text-xl font-semibold theme-secondary">Nom d'équipe</h2>
       <p class="text-lg font-semibold text-gray-900">{{ team?.name }}</p>
     </div>
 
@@ -73,7 +73,7 @@ const calculateVictories = (matches) => {
     <div class="mt-6">
       <RouterLink
         to="/manage-members"
-        class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none transition"
+        class="px-4 py-2 theme-primary-bg text-white rounded-lg hover:opacity-90 focus:outline-none transition"
       >
         <FontAwesomeIcon :icon="faCogs" class="mr-2" />
         Gerer l'équipe
@@ -82,11 +82,11 @@ const calculateVictories = (matches) => {
 
     <!-- Section Membres -->
     <div class="mt-6">
-      <h2 class="text-xl font-semibold text-gray-700">Membres actuels</h2>
+      <h2 class="text-xl font-semibold theme-secondary">Membres actuels</h2>
       <table class="min-w-full table-auto mt-4 border-collapse">
         <thead>
           <tr class="bg-gray-100">
-            <th class="px-4 py-2 text-left">Nom des membres</th>
+            <th class="px-4 py-2 text-left theme-primary">Nom des membres</th>
           </tr>
         </thead>
         <tbody>
