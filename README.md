@@ -1,35 +1,30 @@
-# chat-app-td1
+# Metrolympiades - Gestionnaire de Matchs et d'Équipes
 
-This template should help get you started developing with Vue 3 in Vite.
+## Description
+Application Vue.js permettant la gestion des matchs et des équipes sportives. Cette application offre une interface intuitive pour organiser et suivre les compétitions sportives.
 
-## Recommended IDE Setup
+## Fonctionnalités
+- Gestion des équipes
+    - Création et modification d'équipes
+    - Ajout/suppression de joueurs
+    - Suivi des statistiques
+- Gestion des matchs
+    - Planification des rencontres
+    - Suivi des scores en direct
+    - Historique des matchs
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
-
-```sh
+## Installation
+```bash
+# Installer les dépendances
 npm install
-```
 
-### Compile and Hot-Reload for Development
-
-```sh
+# Lancer le serveur de développement
 npm run dev
+
 ```
 
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
+## Technologies utilisées
+- Vue.js 3
+- Vue Router
+- Vite
+- [Autres dépendances...]

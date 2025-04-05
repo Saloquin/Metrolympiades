@@ -85,8 +85,9 @@ const logout = () => {
               </li>
             </ul>
           </div>
-          <button @click="logout" class="text-red-600 hover:text-red-800">Deconnexion</button>
         </div>
+        <button @click="logout" class="text-red-600 hover:text-red-800">Deconnexion</button>
+
       </template>
 
       <!-- Si l'utilisateur n'est pas connecté, afficher ces liens -->
