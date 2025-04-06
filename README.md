@@ -22,6 +22,7 @@ npm install
 npm run dev
 
 ```
+installer et lancer l'api : https://github.com/ClementCatel/metrolympiades-api
 
 ## Technologies utilisées
 - Vue.js 3
