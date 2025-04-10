@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import axios from '@/axios'
+import { fetchApi } from '@/ApiUtil'
 import { useUserStore } from '@/stores/user'
 import { useThemeStore } from '@/stores/theme' 
 import { useRouter } from 'vue-router'  // Pour la redirection après inscription
@@ -19,20 +19,23 @@ const router = useRouter()
 const register = async () => {
   try {
     // Appel API pour créer l'utilisateur
-    const response = await axios.post('http://localhost:3000/auth/register', {
-      email: email.value,
-      username: username.value,
-      password: password.value,
-      teamName: teamName.value,
+    const response = await fetchApi('/auth/register', {
+      method: 'POST',
+      body: JSON.stringify({
+        email: email.value,
+        username: username.value,
+        password: password.value,
+        teamName: teamName.value,
+      })
     })
     
     // Si l'inscription est réussie, on stocke l'utilisateur et le token
     userStore.login({
-      id: response.data.id,
-      email: response.data.email,
-      name: response.data.username,
-      team: response.data.team,
-      token: response.data.token,
+      id: response.id,
+      email: response.email,
+      name: response.username,
+      team: response.team,
+      token: response.token,
     })
     themeStore.initializeTheme()
     // Redirection vers la page de dashboard après inscription

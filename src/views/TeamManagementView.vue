@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import axios from '@/axios'
+import {fetchApi} from '@/ApiUtil'
 import { useUserStore } from '@/stores/user'
 import { faTrash, faUserPlus, faEdit } from '@fortawesome/free-solid-svg-icons' // Import des icônes
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -11,22 +11,19 @@ const newMember = ref('')
 const newTeamName = ref('')
 const activities = ref([]) 
 
-// Récupérer les informations de l'équipe et les activités
 onMounted(async () => {
   if (userStore.currentUser) {
     try {
-      // Récupérer les informations de l'équipe
-      const teamResponse = await axios.get('/teams/me', {
+      const teamData = await fetchApi('/teams/me', {
         headers: { Authorization: `Bearer ${userStore.token}` }
       })
-      team.value = teamResponse.data
-      newTeamName.value = team.value.name // Initialiser le nom de l'équipe
+      team.value = teamData
+      newTeamName.value = team.value.name 
 
-      // Récupérer les activités de l'équipe
-      const activitiesResponse = await axios.get('/activities', {
+      const activitiesData = await fetchApi('/activities', {
         headers: { Authorization: `Bearer ${userStore.token}` }
       })
-      activities.value = activitiesResponse.data
+      activities.value = activitiesData
     } catch (error) {
       console.error(
         'Erreur lors de la récupération des données de l’équipe ou des activités',
@@ -36,17 +33,16 @@ onMounted(async () => {
   }
 })
 
-// Ajouter un membre à l'équipe
 const addMember = async () => {
   if (newMember.value.trim()) {
     try {
       const updatedMembers = [...team.value.members, newMember.value]
 
-      await axios.put(
-        '/teams/me',
-        { members: updatedMembers },
-        { headers: { Authorization: `Bearer ${userStore.token}` } }
-      )
+      await fetchApi('/teams/me', {
+        method: 'PUT',
+        headers: { Authorization: `Bearer ${userStore.token}` },
+        body: JSON.stringify({ members: updatedMembers })
+      })
 
       team.value.members = updatedMembers
       newMember.value = ''
@@ -60,15 +56,31 @@ const addMember = async () => {
 const updateTeamName = async () => {
   if (newTeamName.value.trim()) {
     try {
-      await axios.put(
-        '/teams/me',
-        { name: newTeamName.value },
-        { headers: { Authorization: `Bearer ${userStore.token}` } }
-      )
+      await fetchApi('/teams/me', {
+        method: 'PUT',
+        headers: { Authorization: `Bearer ${userStore.token}` },
+        body: JSON.stringify({ name: newTeamName.value })
+      })
       team.value.name = newTeamName.value
     } catch (error) {
       console.error('Erreur lors de la mise à jour du nom de l’équipe', error)
     }
+  }
+}
+
+const removeMember = async (member) => {
+  try {
+    const updatedMembers = team.value.members.filter(m => m !== member)
+    
+    await fetchApi('/teams/me', {
+      method: 'PUT',
+      headers: { Authorization: `Bearer ${userStore.token}` },
+      body: JSON.stringify({ members: updatedMembers })
+    })
+
+    team.value.members = updatedMembers
+  } catch (error) {
+    console.error('Erreur lors de la suppression du membre:', error)
   }
 }
 
