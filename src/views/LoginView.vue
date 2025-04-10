@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import axios from '@/axios'
+import { fetchApi } from '@/ApiUtil'
 import { useUserStore } from '@/stores/user'
 import { useThemeStore } from '@/stores/theme'  // Pour le thème
 import { useRouter } from 'vue-router'  // Pour la redirection après connexion
@@ -17,18 +17,21 @@ const router = useRouter()
 const login = async () => {
   try {
     // Appel API pour vérifier les informations de l'utilisateur
-    const response = await axios.post('http://localhost:3000/auth/login', {
-      email: email.value,
-      password: password.value,
+    const response = await fetchApi('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({
+        email: email.value,
+        password: password.value,
+      })
     })
     
     // Si la connexion est réussie, on stocke l'utilisateur et le token
     userStore.login({
-      id: response.data.id,
-      email: response.data.email,
-      name: response.data.username,
-      team: response.data.team,
-      token: response.data.token,
+      id: response.id,
+      email: response.email,
+      name: response.username,
+      team: response.team,
+      token: response.token,
     })
     themeStore.initializeTheme()
     // Redirection vers la page de dashboard après connexion

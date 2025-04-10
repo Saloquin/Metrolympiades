@@ -1,31 +1,26 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import axios from '@/axios'
+import {fetchApi} from '@/ApiUtil'
 import { useUserStore } from '@/stores/user'
 import { faTrophy, faUser, faCogs } from '@fortawesome/free-solid-svg-icons' // Icône pour les victoires
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 const userStore = useUserStore()
 const team = ref(userStore.currentUser?.team)
-const victories = ref(0) // Nombre de victoires
+const victories = ref(0)
 
-// Récupérer les informations de l'équipe et les matchs
 onMounted(async () => {
   if (userStore.currentUser) {
     try {
-      // Récupérer les informations de l'équipe
-      const response = await axios.get('/teams/me', {
+      const teamData = await fetchApi('/teams/me', {
         headers: { Authorization: `Bearer ${userStore.token}` }
       })
-      team.value = response.data
+      team.value = teamData
 
-      // Récupérer les matchs de l'équipe
-      const matchResponse = await axios.get('/matches/me', {
+      const matches = await fetchApi('/matches/me', {
         headers: { Authorization: `Bearer ${userStore.token}` }
       })
-      const matches = matchResponse.data
 
-      // Calculer le nombre de victoires
       victories.value = calculateVictories(matches)
     } catch (error) {
       console.error('Erreur lors de la récupération des données de l’équipe', error)

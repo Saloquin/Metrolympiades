@@ -1,81 +1,69 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useUserStore } from '@/stores/user'
-import axios from '@/axios'
+import {fetchApi} from '@/ApiUtil'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faTrash, faPlus, faSoccerBall, faList } from '@fortawesome/free-solid-svg-icons'
 
 const userStore = useUserStore()
 
-// États pour les matchs et les formulaires
 const matches = ref([])
 const matchForm = ref({
-  activityId: '', // L'ID de l'activité sélectionnée
-  team2Id: '', // L'ID de l'équipe adverse
-  startedAt: '', // La date du match
-  team1Score: 0, // Le score de notre équipe (par défaut 0)
-  team2Score: 0 // Le score de l'équipe adverse (par défaut 0)
+  activityId: '',
+  team2Id: '',
+  startedAt: '', 
+  team1Score: 0, 
+  team2Score: 0 
 })
 const newActivity = ref('')
 
-// Liste des activités et équipes disponibles
 const activities = ref([])
 const teams = ref([])
 
-// Récupérer les activités et équipes disponibles
 const loadData = async () => {
   try {
-    // Charger les activités
-    const activityResponse = await axios.get('/activities', {
+    const activityData = await fetchApi('/activities', {
       headers: { Authorization: `Bearer ${userStore.token}` }
     })
-    activities.value = activityResponse.data
+    activities.value = activityData
 
-    // Charger les équipes (Exclure la vôtre)
-    const teamResponse = await axios.get('/teams', {
+    const teamData = await fetchApi('/teams', {
       headers: { Authorization: `Bearer ${userStore.token}` }
     })
-    teams.value = teamResponse.data.filter((team) => team.id !== userStore.currentUser.team.id)
+    teams.value = teamData.filter((team) => team.id !== userStore.currentUser.team.id)
 
-    // Charger les matchs
     await loadMatches()
   } catch (error) {
     console.error('Erreur lors du chargement des données:', error)
   }
 }
 
-// Récupérer tous les matchs (futurs et passés)
 const loadMatches = async () => {
   try {
-    const response = await axios.get('/matches/me', {
+    const matchData = await fetchApi('/matches/me', {
       headers: { Authorization: `Bearer ${userStore.token}` }
     })
-
-    // Ajouter les matchs dans une seule liste
-    matches.value = response.data
+    matches.value = matchData
   } catch (error) {
     console.error('Erreur lors du chargement des matchs:', error)
   }
 }
 
-// Créer un match
 const createMatch = async () => {
   if (matchForm.value.activityId && matchForm.value.team2Id && matchForm.value.startedAt) {
     try {
-      await axios.post(
-        '/matches',
-        {
-          team2Id: matchForm.value.team2Id, // L'équipe adverse
+      await fetchApi('/matches', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${userStore.token}` },
+        body: JSON.stringify({
+          team2Id: matchForm.value.team2Id,
           activityId: matchForm.value.activityId,
           startedAt: new Date(matchForm.value.startedAt).toISOString(),
-          team1Score: matchForm.value.team1Score, // Le score de votre équipe
-          team2Score: matchForm.value.team2Score // Le score de l'équipe adverse
-        },
-        {
-          headers: { Authorization: `Bearer ${userStore.token}` }
-        }
-      )
-      loadMatches() // Recharger les matchs
+          team1Score: matchForm.value.team1Score,
+          team2Score: matchForm.value.team2Score
+        })
+      })
+      loadMatches()
     } catch (error) {
       console.error('Erreur lors de la création du match:', error)
       alert('Erreur lors de la création du match')
@@ -85,14 +73,14 @@ const createMatch = async () => {
   }
 }
 
-// Supprimer un match avec vérification
 const deleteMatch = async (matchId) => {
   if (confirm('Êtes-vous sûr de vouloir supprimer ce match ?')) {
     try {
-      await axios.delete(`/matches/${matchId}`, {
+      await fetchApi(`/matches/${matchId}`, {
+        method: 'DELETE',
         headers: { Authorization: `Bearer ${userStore.token}` }
       })
-      loadMatches() // Recharger les matchs
+      loadMatches()
     } catch (error) {
       console.error('Erreur lors de la suppression du match:', error)
       alert('Erreur lors de la suppression du match')
@@ -100,20 +88,16 @@ const deleteMatch = async (matchId) => {
   }
 }
 
-// Ajouter une nouvelle activité
 const addActivity = async () => {
   if (newActivity.value.trim()) {
     try {
-      const response = await axios.post(
-        '/activities',
-        { name: newActivity.value },
-        { headers: { Authorization: `Bearer ${userStore.token}` } }
-      )
+      const response = await fetchApi('/activities', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${userStore.token}` },
+        body: JSON.stringify({ name: newActivity.value })
+      })
+      activities.value.push(response)
 
-      // Ajouter l'activité à la liste localement
-      activities.value.push(response.data)
-
-      // Réinitialiser le champ de texte
       newActivity.value = ''
     } catch (error) {
       console.error('Erreur lors de l’ajout de l’activité:', error)
@@ -122,7 +106,7 @@ const addActivity = async () => {
 }
 
 onMounted(() => {
-  loadData() // Charger les données lors du montage du composant
+  loadData()
 })
 </script>
 

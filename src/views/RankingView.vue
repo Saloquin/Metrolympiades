@@ -1,29 +1,27 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import axios from '@/axios'
+import {fetchApi} from '@/ApiUtil'
 import { useUserStore } from '@/stores/user'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome' // Import de l'icône Font Awesome
 import { faTrophy, faUsers, faStar } from '@fortawesome/free-solid-svg-icons' // Icônes des trophées, équipes et étoiles
 
 const userStore = useUserStore()
 
-// Tableau pour stocker les données du classement
 const ranking = ref([])
 
-// Charger le classement des équipes
 const loadRanking = async () => {
   try {
-    const response = await axios.get('/ranking', {
+    const rankingData = await fetchApi('/ranking', {
       headers: { Authorization: `Bearer ${userStore.token}` }
     })
-    ranking.value = response.data
+    ranking.value = rankingData
   } catch (error) {
     console.error('Erreur lors du chargement du classement:', error)
   }
 }
 
 onMounted(() => {
-  loadRanking() // Charger le classement lors du montage du composant
+  loadRanking()
 })
 </script>
 

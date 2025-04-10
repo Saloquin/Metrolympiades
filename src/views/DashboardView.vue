@@ -1,9 +1,9 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import axios from '@/axios'
 import { useUserStore } from '@/stores/user'
 import { Pie } from 'vue-chartjs'
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
+import { fetchApi } from '@/ApiUtil'
 import VueCal from 'vue-cal'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faCalendar, faClipboard, faUserFriends, faXmark } from '@fortawesome/free-solid-svg-icons'
@@ -35,28 +35,29 @@ const calendarEvents = ref([])
 onMounted(async () => {
   if (userStore.currentUser) {
     try {
-      const matchResponse = await axios.get('/matches/me', {
-        headers: { Authorization: `Bearer ${userStore.token}` }
+      const matchData = await fetchApi('/matches/me', {
+        headers: {
+          Authorization: `Bearer ${userStore.token}`
+        }
       })
+      matchHistory.value = matchData.slice(0, 5)
 
-      matchHistory.value = matchResponse.data.slice(0, 5)
-
-      victoryCount.value = matchResponse.data.filter(
+      victoryCount.value = matchData.filter(
         (match) => match.team1Score > match.team2Score
       ).length
 
-      defeatCount.value = matchResponse.data.filter(
+      defeatCount.value = matchData.filter(
         (match) => match.team1Score < match.team2Score
       ).length
 
-      drawCount.value = matchResponse.data.filter(
+      drawCount.value = matchData.filter(
         (match) => match.team1Score === match.team2Score
       ).length
 
-      nextMatches.value = matchResponse.data
+      nextMatches.value = matchData
 
       // Génération des événements pour le calendrier
-      calendarEvents.value = matchResponse.data.map((match) => {
+      calendarEvents.value = matchData.map((match) => {
         const opponent = userStore.currentUser.team === match.team1 ? match.team2 : match.team1
         return {
           start: new Date(match.startedAt),
