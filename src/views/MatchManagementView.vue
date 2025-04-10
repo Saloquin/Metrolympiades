@@ -1,19 +1,27 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useUserStore } from '@/stores/user'
-import {fetchApi} from '@/ApiUtil'
+import { fetchApi } from '@/ApiUtil'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faTrash, faPlus, faSoccerBall, faList } from '@fortawesome/free-solid-svg-icons'
+import {
+  faTrash,
+  faPlus,
+  faSoccerBall,
+  faList,
+  faChevronDown,
+  faChevronUp
+} from '@fortawesome/free-solid-svg-icons'
 
 const userStore = useUserStore()
+const isActivitySectionOpen = ref(false)
 
 const matches = ref([])
 const matchForm = ref({
   activityId: '',
   team2Id: '',
-  startedAt: '', 
-  team1Score: 0, 
-  team2Score: 0 
+  startedAt: '',
+  team1Score: 0,
+  team2Score: 0
 })
 const newActivity = ref('')
 
@@ -34,7 +42,7 @@ const loadData = async () => {
 
     await loadMatches()
   } catch (error) {
-    console.error('Erreur lors du chargement des données:', error)
+    // console.error('Erreur lors du chargement des données:', error)
   }
 }
 
@@ -45,7 +53,7 @@ const loadMatches = async () => {
     })
     matches.value = matchData
   } catch (error) {
-    console.error('Erreur lors du chargement des matchs:', error)
+    //console.error('Erreur lors du chargement des matchs:', error)
   }
 }
 
@@ -65,8 +73,7 @@ const createMatch = async () => {
       })
       loadMatches()
     } catch (error) {
-      console.error('Erreur lors de la création du match:', error)
-      alert('Erreur lors de la création du match')
+      //console.error('Erreur lors de la création du match:', error)
     }
   } else {
     alert('Veuillez remplir tous les champs nécessaires')
@@ -82,8 +89,7 @@ const deleteMatch = async (matchId) => {
       })
       loadMatches()
     } catch (error) {
-      console.error('Erreur lors de la suppression du match:', error)
-      alert('Erreur lors de la suppression du match')
+      //  console.error('Erreur lors de la suppression du match:', error)
     }
   }
 }
@@ -100,9 +106,13 @@ const addActivity = async () => {
 
       newActivity.value = ''
     } catch (error) {
-      console.error('Erreur lors de l’ajout de l’activité:', error)
+      //console.error('Erreur lors de l’ajout de l’activité:', error)
     }
   }
+}
+
+const toggleActivitySection = () => {
+  isActivitySectionOpen.value = !isActivitySectionOpen.value
 }
 
 onMounted(() => {
@@ -112,6 +122,52 @@ onMounted(() => {
 
 <template>
   <div class="p-6 max-w-4xl mx-auto">
+    <div class="bg-white p-6 rounded-lg shadow-lg mb-8">
+      <div @click="toggleActivitySection" class="flex items-center justify-between cursor-pointer">
+        <h2 class="text-xl font-bold mb-4 flex items-center gap-2 theme-secondary">
+          <FontAwesomeIcon :icon="faList" />
+          <span>Gérer les Activités</span>
+        </h2>
+        <FontAwesomeIcon
+          :icon="isActivitySectionOpen ? faChevronUp : faChevronDown"
+          class="text-gray-500 hover:text-gray-700 transition-colors"
+        />
+      </div>
+
+      <div v-show="isActivitySectionOpen" class="space-y-6">
+        <div class="flex items-center gap-4 mb-6">
+          <input
+            v-model="newActivity"
+            type="text"
+            placeholder="Ajouter une activité"
+            class="p-2 border border-gray-300 rounded-lg flex-1 focus:ring-2 ring-primary"
+          />
+          <button
+            @click="addActivity"
+            class="theme-primary-bg text-white px-4 py-2 rounded-lg hover:opacity-90 transition flex items-center gap-2 whitespace-nowrap"
+          >
+            <FontAwesomeIcon :icon="faPlus" />
+            <span>Ajouter</span>
+          </button>
+        </div>
+
+        <div v-if="activities.length > 0">
+          <h3 class="text-lg font-semibold mb-4 theme-secondary">Activités actuelles</h3>
+          <table class="min-w-full table-auto border-collapse">
+            <thead>
+              <tr class="bg-gray-50">
+                <th class="px-4 py-2 text-left theme-primary">Nom de l'activité</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="activity in activities" :key="activity.id" class="border-b">
+                <td class="px-4 py-2">{{ activity.name }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
     <h1 class="text-2xl font-bold mb-4 flex items-center gap-2 theme-primary">
       <FontAwesomeIcon :icon="faSoccerBall" />
       <span>Gestion des Matchs</span>
@@ -134,7 +190,10 @@ onMounted(() => {
 
       <div>
         <label for="team2" class="block text-sm font-medium text-gray-700">Équipe adverse</label>
-        <select v-model="matchForm.team2Id" class="focus:ring-2 ring-primary border p-2 w-full text-sm rounded-lg shadow-sm">
+        <select
+          v-model="matchForm.team2Id"
+          class="focus:ring-2 ring-primary border p-2 w-full text-sm rounded-lg shadow-sm"
+        >
           <option value="">Choisir une équipe</option>
           <option v-for="team in teams" :key="team.id" :value="team.id">{{ team.name }}</option>
         </select>
@@ -214,44 +273,6 @@ onMounted(() => {
           </tr>
         </tbody>
       </table>
-    </div>
-    <div class="bg-white p-6 rounded-lg shadow-lg">
-      <h2 class="text-xl font-bold mb-4 theme-secondary flex items-center gap-2">
-        <FontAwesomeIcon :icon="faPlus" />
-        <span>Gérer les Activités</span>
-      </h2>
-
-      <div class="flex items-center gap-4 mb-6">
-        <input
-          v-model="newActivity"
-          type="text"
-          placeholder="Ajouter une activité"
-          class="p-2 border border-gray-300 rounded-lg flex-1 focus:ring-2 ring-primary"
-        />
-        <button
-          @click="addActivity"
-          class="theme-primary-bg text-white px-4 py-2 rounded-lg hover:opacity-90 transition flex items-center gap-2 whitespace-nowrap"
-        >
-          <FontAwesomeIcon :icon="faPlus" />
-          <span>Ajouter une Activité</span>
-        </button>
-      </div>
-
-      <div>
-        <h3 class="text-lg font-semibold mb-4 theme-secondary">Activités actuelles</h3>
-        <table class="min-w-full table-auto border-collapse">
-          <thead>
-            <tr class="bg-gray-50">
-              <th class="px-4 py-2 text-left theme-primary">Nom de l'activité</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="activity in activities" :key="activity.id" class="border-b">
-              <td class="px-4 py-2">{{ activity.name }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
     </div>
   </div>
 </template>

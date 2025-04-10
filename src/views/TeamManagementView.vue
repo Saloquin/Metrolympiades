@@ -25,10 +25,7 @@ onMounted(async () => {
       })
       activities.value = activitiesData
     } catch (error) {
-      console.error(
-        'Erreur lors de la récupération des données de l’équipe ou des activités',
-        error
-      )
+      //console.error('Erreur lors du chargement des données de l’équipe:', error)
     }
   }
 })
@@ -47,7 +44,7 @@ const addMember = async () => {
       team.value.members = updatedMembers
       newMember.value = ''
     } catch (error) {
-      console.error('Erreur lors de l’ajout d’un membre:', error)
+      //console.error('Erreur lors de l’ajout d’un membre:', error)
     }
   }
 }
@@ -62,8 +59,9 @@ const updateTeamName = async () => {
         body: JSON.stringify({ name: newTeamName.value })
       })
       team.value.name = newTeamName.value
+      userStore.currentUser.team.name = newTeamName.value 
     } catch (error) {
-      console.error('Erreur lors de la mise à jour du nom de l’équipe', error)
+      //console.error('Erreur lors de la mise à jour du nom de l’équipe', error)
     }
   }
 }
@@ -80,7 +78,7 @@ const removeMember = async (member) => {
 
     team.value.members = updatedMembers
   } catch (error) {
-    console.error('Erreur lors de la suppression du membre:', error)
+    //console.error('Erreur lors de la suppression du membre:', error)
   }
 }
 

@@ -16,7 +16,7 @@ const loadRanking = async () => {
     })
     ranking.value = rankingData
   } catch (error) {
-    console.error('Erreur lors du chargement du classement:', error)
+    //console.error('Erreur lors du chargement du classement:', error)
   }
 }
 

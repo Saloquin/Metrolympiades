@@ -37,8 +37,7 @@ const login = async () => {
     // Redirection vers la page de dashboard après connexion
     router.push('/dashboard')
   } catch (error) {
-    console.error('Login failed', error)
-    alert('Email ou mot de passe incorrect')
+    // Afficher une alerte ou un message d'erreur
   }
 }
 </script>

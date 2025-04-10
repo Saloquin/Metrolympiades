@@ -41,8 +41,7 @@ const register = async () => {
     // Redirection vers la page de dashboard après inscription
     router.push('/dashboard')
   } catch (error) {
-    console.error('Registration failed', error)
-    alert('Erreur lors de l\'inscription. Veuillez vérifier vos informations.')
+    // Afficher une alerte ou un message d'erreur
   }
 }
 </script>

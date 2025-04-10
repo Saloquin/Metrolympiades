@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import {fetchApi} from '@/ApiUtil'
+import { fetchApi } from '@/ApiUtil'
 import { useUserStore } from '@/stores/user'
 import { faTrophy, faUser, faCogs } from '@fortawesome/free-solid-svg-icons' // Icône pour les victoires
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -23,7 +23,7 @@ onMounted(async () => {
 
       victories.value = calculateVictories(matches)
     } catch (error) {
-      console.error('Erreur lors de la récupération des données de l’équipe', error)
+      //erreur lors du chargement des données
     }
   }
 })
