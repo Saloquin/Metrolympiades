@@ -9,7 +9,7 @@ const userStore = useUserStore()
 
 <template>
   <section class="text-center mt-16 px-4">
-    <h1 class="text-5xl font-bold theme-secondary mb-6">
+    <h1 class="text-4xl font-bold theme-secondary mb-6 sm:text-6xl">
       Bienvenue sur <span class="theme-primary">Métrolympiades</span>
     </h1>
     <p class="text-lg text-gray-600 mb-6">

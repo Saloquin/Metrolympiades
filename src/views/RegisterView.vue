@@ -71,5 +71,11 @@ const register = async () => {
         <span>Register</span>
       </button>
     </form>
+    <p class="mt-4 text-center text-gray-600">
+      Déjà un compte ? 
+      <RouterLink to="/login" class="theme-primary hover:opacity-80">
+        Se connecter
+      </RouterLink>
+    </p>
   </div>
 </template>

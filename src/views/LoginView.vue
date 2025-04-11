@@ -59,5 +59,11 @@ const login = async () => {
         <span>Login</span>
       </button>
     </form>
+    <p class="mt-4 text-center text-gray-600">
+      Pas encore de compte ? 
+      <RouterLink to="/register" class="theme-primary hover:opacity-80">
+        Créer un compte
+      </RouterLink>
+    </p>
   </div>
 </template>

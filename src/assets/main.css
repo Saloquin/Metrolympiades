@@ -28,7 +28,6 @@ html[data-font-size="large"] {
   font-size: 18px;
 }
 
-/* Theme color utilities */
 .theme-primary {
   color: var(--primary-color);
 }
@@ -43,6 +42,17 @@ html[data-font-size="large"] {
 
 .theme-secondary-bg {
   background-color: var(--secondary-color);
+}
+.hover\:text-secondary:hover {
+  color: var(--secondary-color);
+}
+.hover\:text-primary:hover {
+  color: var(--primary-color);
+}
+
+
+.hover\:bg-gray-50:hover {
+  background-color: rgb(249 250 251);
 }
 
 .ring-primary {

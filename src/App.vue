@@ -1,5 +1,5 @@
 <script setup>
-import Navbar from './components/Navbar.vue'
+import Navbar from './components/NavBar.vue'
 import ThemeSettings from './components/ThemeSettings.vue'
 import { useUserStore } from '@/stores/user'
 import { useThemeStore } from '@/stores/theme'
@@ -17,7 +17,6 @@ onMounted(() => {
   }
 })
 
-// Watch for login state changes
 watch(() => userStore.isLoggedIn, (isLoggedIn) => {
   if (isLoggedIn) {
     themeStore.initializeTheme()

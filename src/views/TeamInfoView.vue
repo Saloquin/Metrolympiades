@@ -2,8 +2,10 @@
 import { ref, onMounted } from 'vue'
 import { fetchApi } from '@/ApiUtil'
 import { useUserStore } from '@/stores/user'
-import { faTrophy, faUser, faCogs } from '@fortawesome/free-solid-svg-icons' // Icône pour les victoires
+import { faTrophy, faUser, faCogs } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import MemberCard from '@/components/card/MemberCard.vue'
+
 
 const userStore = useUserStore()
 const team = ref(userStore.currentUser?.team)
@@ -74,22 +76,19 @@ const calculateVictories = (matches) => {
         Gerer l'équipe
       </RouterLink>
     </div>
-
-    <!-- Section Membres -->
     <div class="mt-6">
-      <h2 class="text-xl font-semibold theme-secondary">Membres actuels</h2>
-      <table class="min-w-full table-auto mt-4 border-collapse">
-        <thead>
-          <tr class="bg-gray-100">
-            <th class="px-4 py-2 text-left theme-primary">Nom des membres</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(member, index) in team?.members" :key="index" class="border-b">
-            <td class="px-4 py-2">{{ member }}</td>
-          </tr>
-        </tbody>
-      </table>
+    <h2 class="text-xl font-semibold theme-secondary mb-4">Membres actuels</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <MemberCard 
+        :name="userStore.currentUser.name"
+        :is-current-user="true"
+      />
+      <MemberCard
+        v-for="(member, index) in team?.members"
+        :key="index"
+        :name="member"
+      />
     </div>
+  </div>
   </div>
 </template>

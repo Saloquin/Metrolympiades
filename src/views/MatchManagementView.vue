@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useUserStore } from '@/stores/user'
 import { fetchApi } from '@/ApiUtil'
+import MatchCard from '@/components/card/MatchCard.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {
   faTrash,
@@ -19,7 +20,7 @@ const matches = ref([])
 const matchForm = ref({
   activityId: '',
   team2Id: '',
-  startedAt: '',
+  time: '',
   team1Score: 0,
   team2Score: 0
 })
@@ -58,15 +59,19 @@ const loadMatches = async () => {
 }
 
 const createMatch = async () => {
-  if (matchForm.value.activityId && matchForm.value.team2Id && matchForm.value.startedAt) {
+  if (matchForm.value.activityId && matchForm.value.team2Id && matchForm.value.time) {
     try {
+      const today = new Date()
+      const [hours, minutes] = matchForm.value.time.split(':')
+      today.setHours(parseInt(hours), parseInt(minutes), 0, 0)
+
       await fetchApi('/matches', {
         method: 'POST',
         headers: { Authorization: `Bearer ${userStore.token}` },
         body: JSON.stringify({
           team2Id: matchForm.value.team2Id,
           activityId: matchForm.value.activityId,
-          startedAt: new Date(matchForm.value.startedAt).toISOString(),
+          startedAt: today.toISOString(),
           team1Score: matchForm.value.team1Score,
           team2Score: matchForm.value.team2Score
         })
@@ -174,7 +179,7 @@ onMounted(() => {
     </h1>
 
     <!-- Formulaire pour créer un match -->
-    <form @submit.prevent="createMatch" class="space-y-6 mb-8 bg-gray-50 p-6 rounded-lg shadow-lg">
+    <form @submit.prevent="createMatch" class="space-y-6 mb-8 bg-white p-6 rounded-lg shadow-lg">
       <div>
         <label for="activity" class="block text-sm font-medium text-gray-700 mb-2">Activité</label>
         <select
@@ -200,12 +205,14 @@ onMounted(() => {
       </div>
 
       <div>
-        <label for="startedAt" class="block text-sm font-medium text-gray-700">Date du match</label>
+        <label for="time" class="block text-sm font-medium text-gray-700">Heure du match</label>
         <input
-          v-model="matchForm.startedAt"
-          type="datetime-local"
+          v-model="matchForm.time"
+          type="time"
           class="border p-2 w-full text-sm rounded-lg shadow-sm focus:ring-2 ring-primary"
+          required
         />
+        <p class="mt-1 text-sm text-gray-500">Le match sera programmé pour aujourd'hui</p>
       </div>
 
       <!-- Score -->
@@ -247,32 +254,25 @@ onMounted(() => {
         <FontAwesomeIcon :icon="faList" />
         <span>Tous les matchs</span>
       </h2>
-      <table class="min-w-full table-auto border-collapse text-sm">
-        <thead>
-          <tr class="bg-gray-50">
-            <th class="border px-4 py-2 text-left theme-primary">Équipe 1</th>
-            <th class="border px-4 py-2 text-left theme-primary">Équipe 2</th>
-            <th class="border px-4 py-2 text-left theme-primary">Activité</th>
-            <th class="border px-4 py-2 text-left theme-primary">Date</th>
-            <th class="border px-4 py-2 text-left theme-primary">Score</th>
-            <th class="border px-4 py-2 text-left theme-primary">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="match in matches" :key="match.id">
-            <td class="border px-4 py-2">{{ match.team1 }}</td>
-            <td class="border px-4 py-2">{{ match.team2 }}</td>
-            <td class="border px-4 py-2">{{ match.activity }}</td>
-            <td class="border px-4 py-2">{{ new Date(match.startedAt).toLocaleString() }}</td>
-            <td class="border px-4 py-2">{{ match.team1Score }}/{{ match.team2Score }}</td>
-            <td class="border px-4 py-2 text-red-600 hover:text-red-800 cursor-pointer">
-              <div class="flex items-center justify-center h-full" @click="deleteMatch(match.id)">
-                <FontAwesomeIcon :icon="faTrash" class="mx-4" />
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+
+      <div class="space-y-4 ">
+        <div v-for="match in matches" :key="match.id" class="flex items-center gap-4">
+          <div class="flex-grow">
+            <MatchCard
+              :match="match"
+              :is-current-team="userStore.currentUser.team.name === match.team1"
+            />
+          </div>
+          <button
+            @click="deleteMatch(match.id)"
+            class="text-red-600 hover:text-red-800 transition-colors p-2"
+          >
+            <FontAwesomeIcon :icon="faTrash" size="lg" />
+          </button>
+        </div>
+
+        <p v-if="matches.length === 0" class="text-center text-gray-500 py-4">Aucun match trouvé</p>
+      </div>
     </div>
   </div>
 </template>
