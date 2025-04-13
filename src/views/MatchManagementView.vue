@@ -150,7 +150,10 @@ onMounted(() => {
 
       <div>
         <label for="team2" class="block text-sm font-medium text-gray-700">Équipe adverse</label>
-        <select v-model="matchForm.team2Id" class="focus:ring-2 ring-primary border p-2 w-full text-sm rounded-lg shadow-sm">
+        <select
+          v-model="matchForm.team2Id"
+          class="focus:ring-2 ring-primary border p-2 w-full text-sm rounded-lg shadow-sm"
+        >
           <option value="">Choisir une équipe</option>
           <option v-for="team in teams" :key="team.id" :value="team.id">{{ team.name }}</option>
         </select>
@@ -174,6 +177,8 @@ onMounted(() => {
           <input
             v-model="matchForm.team1Score"
             type="number"
+            min="0"
+            max="100"
             class="border p-2 w-full text-sm rounded-lg shadow-sm focus:ring-2 ring-primary"
           />
         </div>
@@ -184,6 +189,8 @@ onMounted(() => {
           <input
             v-model="matchForm.team2Score"
             type="number"
+            min="0"
+            max="100"
             class="border p-2 w-full text-sm rounded-lg shadow-sm focus:ring-2 ring-primary"
           />
         </div>
