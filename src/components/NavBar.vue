@@ -210,7 +210,7 @@ const handleDropdownHover = (dropdown, isHovered) => {
                 <TranslationText text="myTeam" />
               </RouterLink>
               <RouterLink
-                to="/next-matches"
+                to="/matches"
                 class="block pl-4 py-2 text-gray-600 hover:theme-primary"
                 @click="showMobileMenu = false"
               >
