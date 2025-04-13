@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import axios from '@/axios'
+import { fetchApi } from '@/ApiUtil'
 import { useUserStore } from '@/stores/user'
 import { useThemeStore } from '@/stores/theme'  // Pour le thème
 import { useRouter } from 'vue-router'  // Pour la redirection après connexion
@@ -17,25 +17,27 @@ const router = useRouter()
 const login = async () => {
   try {
     // Appel API pour vérifier les informations de l'utilisateur
-    const response = await axios.post('http://localhost:3000/auth/login', {
-      email: email.value,
-      password: password.value,
+    const response = await fetchApi('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({
+        email: email.value,
+        password: password.value,
+      })
     })
     
     // Si la connexion est réussie, on stocke l'utilisateur et le token
     userStore.login({
-      id: response.data.id,
-      email: response.data.email,
-      name: response.data.username,
-      team: response.data.team,
-      token: response.data.token,
+      id: response.id,
+      email: response.email,
+      name: response.username,
+      team: response.team,
+      token: response.token,
     })
     themeStore.initializeTheme()
     // Redirection vers la page de dashboard après connexion
     router.push('/dashboard')
   } catch (error) {
-    console.error('Login failed', error)
-    alert('Email ou mot de passe incorrect')
+    // Afficher une alerte ou un message d'erreur
   }
 }
 </script>
@@ -57,5 +59,11 @@ const login = async () => {
         <span>Login</span>
       </button>
     </form>
+    <p class="mt-4 text-center text-gray-600">
+      Pas encore de compte ? 
+      <RouterLink to="/register" class="theme-primary hover:opacity-80">
+        Créer un compte
+      </RouterLink>
+    </p>
   </div>
 </template>

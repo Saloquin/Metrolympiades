@@ -9,6 +9,8 @@ import TeamManagementView from '@/views/TeamManagementView.vue'
 import MatchManagementView from '@/views/MatchManagementView.vue'
 import RankingView from '@/views/RankingView.vue'
 import TeamInfoView from '@/views/TeamInfoView.vue'
+import MatchInfoView from '@/views/MatchInfoView.vue'
+
 
 // Définir une configuration des routes non protégées
 const routeOklm = ['Home', 'Login', 'Register', 'Ranking']
@@ -20,6 +22,7 @@ const routes = [
   { path: '/dashboard', name: 'Dashboard', component: DashboardView },
   { path: '/manage-members', name: 'TeamManagement', component: TeamManagementView },
   { path: '/team', name: 'TeamInfoView', component: TeamInfoView },
+  { path: '/matches', name: 'MatchInfoView', component: MatchInfoView },
   { path: '/manage-match', name: 'MatchManagement', component: MatchManagementView },
   { path: '/ranking', name: 'Ranking', component: RankingView }
 ]

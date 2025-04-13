@@ -1,34 +1,31 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import axios from '@/axios'
+import { fetchApi } from '@/ApiUtil'
 import { useUserStore } from '@/stores/user'
-import { faTrophy, faUser, faCogs } from '@fortawesome/free-solid-svg-icons' // Icône pour les victoires
+import { faTrophy, faUser, faCogs } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import MemberCard from '@/components/card/MemberCard.vue'
+
 
 const userStore = useUserStore()
 const team = ref(userStore.currentUser?.team)
-const victories = ref(0) // Nombre de victoires
+const victories = ref(0)
 
-// Récupérer les informations de l'équipe et les matchs
 onMounted(async () => {
   if (userStore.currentUser) {
     try {
-      // Récupérer les informations de l'équipe
-      const response = await axios.get('/teams/me', {
+      const teamData = await fetchApi('/teams/me', {
         headers: { Authorization: `Bearer ${userStore.token}` }
       })
-      team.value = response.data
+      team.value = teamData
 
-      // Récupérer les matchs de l'équipe
-      const matchResponse = await axios.get('/matches/me', {
+      const matches = await fetchApi('/matches/me', {
         headers: { Authorization: `Bearer ${userStore.token}` }
       })
-      const matches = matchResponse.data
 
-      // Calculer le nombre de victoires
       victories.value = calculateVictories(matches)
     } catch (error) {
-      console.error('Erreur lors de la récupération des données de l’équipe', error)
+      //erreur lors du chargement des données
     }
   }
 })
@@ -79,22 +76,19 @@ const calculateVictories = (matches) => {
         Gerer l'équipe
       </RouterLink>
     </div>
-
-    <!-- Section Membres -->
     <div class="mt-6">
-      <h2 class="text-xl font-semibold theme-secondary">Membres actuels</h2>
-      <table class="min-w-full table-auto mt-4 border-collapse">
-        <thead>
-          <tr class="bg-gray-100">
-            <th class="px-4 py-2 text-left theme-primary">Nom des membres</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(member, index) in team?.members" :key="index" class="border-b">
-            <td class="px-4 py-2">{{ member }}</td>
-          </tr>
-        </tbody>
-      </table>
+    <h2 class="text-xl font-semibold theme-secondary mb-4">Membres actuels</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <MemberCard 
+        :name="userStore.currentUser.name"
+        :is-current-user="true"
+      />
+      <MemberCard
+        v-for="(member, index) in team?.members"
+        :key="index"
+        :name="member"
+      />
     </div>
+  </div>
   </div>
 </template>

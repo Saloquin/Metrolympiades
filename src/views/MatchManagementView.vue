@@ -1,140 +1,185 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useUserStore } from '@/stores/user'
-import axios from '@/axios'
+import { fetchApi } from '@/ApiUtil'
+import MatchCard from '@/components/card/MatchCard.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faTrash, faPlus, faSoccerBall, faList } from '@fortawesome/free-solid-svg-icons'
+import {
+  faTrash,
+  faPlus,
+  faSoccerBall,
+  faList,
+  faChevronDown,
+  faChevronUp
+} from '@fortawesome/free-solid-svg-icons'
 
 const userStore = useUserStore()
+const isActivitySectionOpen = ref(false)
 
-// États pour les matchs et les formulaires
 const matches = ref([])
 const matchForm = ref({
-  activityId: '', // L'ID de l'activité sélectionnée
-  team2Id: '', // L'ID de l'équipe adverse
-  startedAt: '', // La date du match
-  team1Score: 0, // Le score de notre équipe (par défaut 0)
-  team2Score: 0 // Le score de l'équipe adverse (par défaut 0)
+  activityId: '',
+  team2Id: '',
+  time: '',
+  team1Score: 0,
+  team2Score: 0
 })
 const newActivity = ref('')
 
-// Liste des activités et équipes disponibles
 const activities = ref([])
 const teams = ref([])
 
-// Récupérer les activités et équipes disponibles
 const loadData = async () => {
   try {
-    // Charger les activités
-    const activityResponse = await axios.get('/activities', {
+    const activityData = await fetchApi('/activities', {
       headers: { Authorization: `Bearer ${userStore.token}` }
     })
-    activities.value = activityResponse.data
+    activities.value = activityData
 
-    // Charger les équipes (Exclure la vôtre)
-    const teamResponse = await axios.get('/teams', {
+    const teamData = await fetchApi('/teams', {
       headers: { Authorization: `Bearer ${userStore.token}` }
     })
-    teams.value = teamResponse.data.filter((team) => team.id !== userStore.currentUser.team.id)
+    teams.value = teamData.filter((team) => team.id !== userStore.currentUser.team.id)
 
-    // Charger les matchs
     await loadMatches()
   } catch (error) {
-    console.error('Erreur lors du chargement des données:', error)
+    // console.error('Erreur lors du chargement des données:', error)
   }
 }
 
-// Récupérer tous les matchs (futurs et passés)
 const loadMatches = async () => {
   try {
-    const response = await axios.get('/matches/me', {
+    const matchData = await fetchApi('/matches/me', {
       headers: { Authorization: `Bearer ${userStore.token}` }
     })
-
-    // Ajouter les matchs dans une seule liste
-    matches.value = response.data
+    matches.value = matchData
   } catch (error) {
-    console.error('Erreur lors du chargement des matchs:', error)
+    //console.error('Erreur lors du chargement des matchs:', error)
   }
 }
 
-// Créer un match
 const createMatch = async () => {
-  if (matchForm.value.activityId && matchForm.value.team2Id && matchForm.value.startedAt) {
+  if (matchForm.value.activityId && matchForm.value.team2Id && matchForm.value.time) {
     try {
-      await axios.post(
-        '/matches',
-        {
-          team2Id: matchForm.value.team2Id, // L'équipe adverse
+      const today = new Date()
+      const [hours, minutes] = matchForm.value.time.split(':')
+      today.setHours(parseInt(hours), parseInt(minutes), 0, 0)
+
+      await fetchApi('/matches', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${userStore.token}` },
+        body: JSON.stringify({
+          team2Id: matchForm.value.team2Id,
           activityId: matchForm.value.activityId,
-          startedAt: new Date(matchForm.value.startedAt).toISOString(),
-          team1Score: matchForm.value.team1Score, // Le score de votre équipe
-          team2Score: matchForm.value.team2Score // Le score de l'équipe adverse
-        },
-        {
-          headers: { Authorization: `Bearer ${userStore.token}` }
-        }
-      )
-      loadMatches() // Recharger les matchs
+          startedAt: today.toISOString(),
+          team1Score: matchForm.value.team1Score,
+          team2Score: matchForm.value.team2Score
+        })
+      })
+      loadMatches()
     } catch (error) {
-      console.error('Erreur lors de la création du match:', error)
-      alert('Erreur lors de la création du match')
+      //console.error('Erreur lors de la création du match:', error)
     }
   } else {
     alert('Veuillez remplir tous les champs nécessaires')
   }
 }
 
-// Supprimer un match avec vérification
 const deleteMatch = async (matchId) => {
   if (confirm('Êtes-vous sûr de vouloir supprimer ce match ?')) {
     try {
-      await axios.delete(`/matches/${matchId}`, {
+      await fetchApi(`/matches/${matchId}`, {
+        method: 'DELETE',
         headers: { Authorization: `Bearer ${userStore.token}` }
       })
-      loadMatches() // Recharger les matchs
+      loadMatches()
     } catch (error) {
-      console.error('Erreur lors de la suppression du match:', error)
-      alert('Erreur lors de la suppression du match')
+      //  console.error('Erreur lors de la suppression du match:', error)
     }
   }
 }
 
-// Ajouter une nouvelle activité
 const addActivity = async () => {
   if (newActivity.value.trim()) {
     try {
-      const response = await axios.post(
-        '/activities',
-        { name: newActivity.value },
-        { headers: { Authorization: `Bearer ${userStore.token}` } }
-      )
+      const response = await fetchApi('/activities', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${userStore.token}` },
+        body: JSON.stringify({ name: newActivity.value })
+      })
+      activities.value.push(response)
 
-      // Ajouter l'activité à la liste localement
-      activities.value.push(response.data)
-
-      // Réinitialiser le champ de texte
       newActivity.value = ''
     } catch (error) {
-      console.error('Erreur lors de l’ajout de l’activité:', error)
+      //console.error('Erreur lors de l’ajout de l’activité:', error)
     }
   }
 }
 
+const toggleActivitySection = () => {
+  isActivitySectionOpen.value = !isActivitySectionOpen.value
+}
+
 onMounted(() => {
-  loadData() // Charger les données lors du montage du composant
+  loadData()
 })
 </script>
 
 <template>
   <div class="p-6 max-w-4xl mx-auto">
+    <div class="bg-white p-6 rounded-lg shadow-lg mb-8">
+      <div @click="toggleActivitySection" class="flex items-center justify-between cursor-pointer">
+        <h2 class="text-xl font-bold mb-4 flex items-center gap-2 theme-secondary">
+          <FontAwesomeIcon :icon="faList" />
+          <span>Gérer les Activités</span>
+        </h2>
+        <FontAwesomeIcon
+          :icon="isActivitySectionOpen ? faChevronUp : faChevronDown"
+          class="text-gray-500 hover:text-gray-700 transition-colors"
+        />
+      </div>
+
+      <div v-show="isActivitySectionOpen" class="space-y-6">
+        <div class="flex items-center gap-4 mb-6">
+          <input
+            v-model="newActivity"
+            type="text"
+            placeholder="Ajouter une activité"
+            class="p-2 border border-gray-300 rounded-lg flex-1 focus:ring-2 ring-primary"
+          />
+          <button
+            @click="addActivity"
+            class="theme-primary-bg text-white px-4 py-2 rounded-lg hover:opacity-90 transition flex items-center gap-2 whitespace-nowrap"
+          >
+            <FontAwesomeIcon :icon="faPlus" />
+            <span>Ajouter</span>
+          </button>
+        </div>
+
+        <div v-if="activities.length > 0">
+          <h3 class="text-lg font-semibold mb-4 theme-secondary">Activités actuelles</h3>
+          <table class="min-w-full table-auto border-collapse">
+            <thead>
+              <tr class="bg-gray-50">
+                <th class="px-4 py-2 text-left theme-primary">Nom de l'activité</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="activity in activities" :key="activity.id" class="border-b">
+                <td class="px-4 py-2">{{ activity.name }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
     <h1 class="text-2xl font-bold mb-4 flex items-center gap-2 theme-primary">
       <FontAwesomeIcon :icon="faSoccerBall" />
       <span>Gestion des Matchs</span>
     </h1>
 
     <!-- Formulaire pour créer un match -->
-    <form @submit.prevent="createMatch" class="space-y-6 mb-8 bg-gray-50 p-6 rounded-lg shadow-lg">
+    <form @submit.prevent="createMatch" class="space-y-6 mb-8 bg-white p-6 rounded-lg shadow-lg">
       <div>
         <label for="activity" class="block text-sm font-medium text-gray-700 mb-2">Activité</label>
         <select
@@ -160,12 +205,14 @@ onMounted(() => {
       </div>
 
       <div>
-        <label for="startedAt" class="block text-sm font-medium text-gray-700">Date du match</label>
+        <label for="time" class="block text-sm font-medium text-gray-700">Heure du match</label>
         <input
-          v-model="matchForm.startedAt"
-          type="datetime-local"
+          v-model="matchForm.time"
+          type="time"
           class="border p-2 w-full text-sm rounded-lg shadow-sm focus:ring-2 ring-primary"
+          required
         />
+        <p class="mt-1 text-sm text-gray-500">Le match sera programmé pour aujourd'hui</p>
       </div>
 
       <!-- Score -->
@@ -211,69 +258,24 @@ onMounted(() => {
         <FontAwesomeIcon :icon="faList" />
         <span>Tous les matchs</span>
       </h2>
-      <table class="min-w-full table-auto border-collapse text-sm">
-        <thead>
-          <tr class="bg-gray-50">
-            <th class="border px-4 py-2 text-left theme-primary">Équipe 1</th>
-            <th class="border px-4 py-2 text-left theme-primary">Équipe 2</th>
-            <th class="border px-4 py-2 text-left theme-primary">Activité</th>
-            <th class="border px-4 py-2 text-left theme-primary">Date</th>
-            <th class="border px-4 py-2 text-left theme-primary">Score</th>
-            <th class="border px-4 py-2 text-left theme-primary">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="match in matches" :key="match.id">
-            <td class="border px-4 py-2">{{ match.team1 }}</td>
-            <td class="border px-4 py-2">{{ match.team2 }}</td>
-            <td class="border px-4 py-2">{{ match.activity }}</td>
-            <td class="border px-4 py-2">{{ new Date(match.startedAt).toLocaleString() }}</td>
-            <td class="border px-4 py-2">{{ match.team1Score }}/{{ match.team2Score }}</td>
-            <td class="border px-4 py-2 text-red-600 hover:text-red-800 cursor-pointer">
-              <div class="flex items-center justify-center h-full" @click="deleteMatch(match.id)">
-                <FontAwesomeIcon :icon="faTrash" class="mx-4" />
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="bg-white p-6 rounded-lg shadow-lg">
-      <h2 class="text-xl font-bold mb-4 theme-secondary flex items-center gap-2">
-        <FontAwesomeIcon :icon="faPlus" />
-        <span>Gérer les Activités</span>
-      </h2>
 
-      <div class="flex items-center gap-4 mb-6">
-        <input
-          v-model="newActivity"
-          type="text"
-          placeholder="Ajouter une activité"
-          class="p-2 border border-gray-300 rounded-lg flex-1 focus:ring-2 ring-primary"
-        />
-        <button
-          @click="addActivity"
-          class="theme-primary-bg text-white px-4 py-2 rounded-lg hover:opacity-90 transition flex items-center gap-2 whitespace-nowrap"
-        >
-          <FontAwesomeIcon :icon="faPlus" />
-          <span>Ajouter une Activité</span>
-        </button>
-      </div>
+      <div class="space-y-4 ">
+        <div v-for="match in matches" :key="match.id" class="flex items-center gap-4">
+          <div class="flex-grow">
+            <MatchCard
+              :match="match"
+              :is-current-team="userStore.currentUser.team.name === match.team1"
+            />
+          </div>
+          <button
+            @click="deleteMatch(match.id)"
+            class="text-red-600 hover:text-red-800 transition-colors p-2"
+          >
+            <FontAwesomeIcon :icon="faTrash" size="lg" />
+          </button>
+        </div>
 
-      <div>
-        <h3 class="text-lg font-semibold mb-4 theme-secondary">Activités actuelles</h3>
-        <table class="min-w-full table-auto border-collapse">
-          <thead>
-            <tr class="bg-gray-50">
-              <th class="px-4 py-2 text-left theme-primary">Nom de l'activité</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="activity in activities" :key="activity.id" class="border-b">
-              <td class="px-4 py-2">{{ activity.name }}</td>
-            </tr>
-          </tbody>
-        </table>
+        <p v-if="matches.length === 0" class="text-center text-gray-500 py-4">Aucun match trouvé</p>
       </div>
     </div>
   </div>

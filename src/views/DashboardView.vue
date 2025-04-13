@@ -1,23 +1,22 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import axios from '@/axios'
 import { useUserStore } from '@/stores/user'
 import { Pie } from 'vue-chartjs'
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
+import MatchHistoryCard from '@/components/card/MatchHistoryCard.vue'
+import { fetchApi } from '@/ApiUtil'
 import VueCal from 'vue-cal'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faCalendar, faClipboard, faUserFriends, faXmark } from '@fortawesome/free-solid-svg-icons'
-
-// Enregistrement des éléments nécessaires pour Chart.js
+import { faCalendar, faClipboard, faUserFriends, faXmark, faTrophy } from '@fortawesome/free-solid-svg-icons'
 ChartJS.register(ArcElement, Tooltip, Legend)
 
 const userStore = useUserStore()
-const matchHistory = ref([]) // Historique des matchs
-const nextMatches = ref([]) // Prochains matchs
-const victoryCount = ref(0) // Nombre de victoires
-const defeatCount = ref(0) // Nombre de défaites
+const matchHistory = ref([])
+const nextMatches = ref([])
+const victoryCount = ref(0)
+const defeatCount = ref(0)
 const drawCount = ref(0)
-const team = ref(userStore.currentUser?.team) // Équipe de l'utilisateur
+const team = ref(userStore.currentUser?.team)
 const selectedMatch = ref(null)
 const showModal = ref(false)
 
@@ -35,52 +34,52 @@ const calendarEvents = ref([])
 onMounted(async () => {
   if (userStore.currentUser) {
     try {
-      const matchResponse = await axios.get('/matches/me', {
-        headers: { Authorization: `Bearer ${userStore.token}` }
+      const matchData = await fetchApi('/matches/me', {
+        headers: {
+          Authorization: `Bearer ${userStore.token}`
+        }
       })
+      const pastMatches = matchData
+        .filter((match) => new Date(match.startedAt) < new Date())
+        .sort((a, b) => new Date(b.startedAt) - new Date(a.startedAt))
 
-      matchHistory.value = matchResponse.data.slice(0, 5)
+      matchHistory.value = pastMatches.slice(0, 5)
 
-      victoryCount.value = matchResponse.data.filter(
-        (match) => match.team1Score > match.team2Score
-      ).length
+      victoryCount.value = pastMatches.filter((match) => {
+        if (team.value.name === match.team1) {
+          return match.team1Score > match.team2Score
+        } else {
+          return match.team2Score > match.team1Score
+        }
+      }).length
 
-      defeatCount.value = matchResponse.data.filter(
-        (match) => match.team1Score < match.team2Score
-      ).length
+      defeatCount.value = pastMatches.filter((match) => {
+        if (team.value.name === match.team1) {
+          return match.team1Score < match.team2Score
+        } else {
+          return match.team2Score < match.team1Score
+        }
+      }).length
 
-      drawCount.value = matchResponse.data.filter(
-        (match) => match.team1Score === match.team2Score
-      ).length
+      drawCount.value = pastMatches.filter((match) => match.team1Score === match.team2Score).length
 
-      nextMatches.value = matchResponse.data
+      nextMatches.value = matchData
 
       // Génération des événements pour le calendrier
-      calendarEvents.value = matchResponse.data.map((match) => {
+      calendarEvents.value = matchData.map((match) => {
         const opponent = userStore.currentUser.team === match.team1 ? match.team2 : match.team1
         return {
           start: new Date(match.startedAt),
-          end: new Date(new Date(match.startedAt).getTime() + 60 * 60 * 1000), // 1h
+          end: new Date(new Date(match.startedAt).getTime() + 60 * 60 * 1000),
           title: `${match.activity} vs ${opponent}`,
           originalMatch: match
         }
       })
     } catch (error) {
-      console.error('Erreur lors de la récupération des données des matchs', error)
+      // Erreur lors du chargement des matchs
     }
   }
 })
-
-// Retourner la couleur selon le résultat du match
-const getResultColor = (match) => {
-  if (
-    (team.value.name == match.team1 && match.team1Score > match.team2Score) ||
-    (team.value.name == match.team2 && match.team2Score > match.team1Score)
-  )
-    return 'bg-green-300' // Victoire
-  if (match.team1Score == match.team2Score) return 'bg-yellow-300'
-  return 'bg-red-300'
-}
 </script>
 
 <template>
@@ -120,7 +119,7 @@ const getResultColor = (match) => {
     </div>
 
     <!-- Bouton vers "InfoTeam" -->
-    <div class="mb-8">
+    <div class="mb-8 flex gap-4">
       <RouterLink
         to="/team"
         class="px-4 py-2 theme-primary-bg text-white rounded-lg hover:opacity-90 transition-opacity flex items-center"
@@ -128,37 +127,31 @@ const getResultColor = (match) => {
         <FontAwesomeIcon :icon="faUserFriends" class="mr-2" />
         Voir Info Team
       </RouterLink>
+
+      <RouterLink
+        to="/ranking"
+        class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-opacity flex items-center"
+      >
+        <FontAwesomeIcon :icon="faTrophy" class="mr-2" />
+        Voir le classement
+      </RouterLink>
     </div>
 
     <!-- Historique des matchs -->
     <h2 class="text-2xl font-bold mb-4 theme-secondary">
-      Historique des matchs <FontAwesomeIcon :icon="faClipboard" />
-    </h2>
-    <div class="overflow-x-auto border border-gray-300 rounded-lg mb-8">
-      <table class="min-w-full table-auto mt-4 border-collapse">
-        <thead>
-          <tr>
-            <th class="px-4 py-2 text-left">Adversaire</th>
-            <th class="px-4 py-2 text-left">Activité</th>
-            <th class="px-4 py-2 text-left">Score</th>
-            <th class="px-4 py-2 text-left">Date</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="(match, index) in matchHistory"
-            :key="index"
-            :class="getResultColor(match)"
-            class="border-b"
-          >
-            <td class="px-4 py-2">{{ team.name === match.team2 ? match.team1 : match.team2 }}</td>
-            <td class="px-4 py-2">{{ match.activity }}</td>
-            <td class="px-4 py-2">{{ match.team1Score }}/{{ match.team2Score }}</td>
-            <td class="px-4 py-2">{{ new Date(match.startedAt).toLocaleString() }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    Historique des matchs <FontAwesomeIcon :icon="faClipboard" />
+  </h2>
+  <div class="space-y-4 mb-8">
+    <MatchHistoryCard
+      v-for="(match, index) in matchHistory"
+      :key="index"
+      :match="match"
+      :is-current-team="userStore.currentUser.team.name === match.team1"
+    />
+    <p v-if="matchHistory.length === 0" class="text-center text-gray-500 py-4">
+      Aucun match dans l'historique
+    </p>
+  </div>
 
     <!-- Prochains matchs -->
     <!-- Calendrier des prochains matchs -->
@@ -168,10 +161,13 @@ const getResultColor = (match) => {
     <div class="border border-gray-300 rounded-lg p-4 mb-8">
       <VueCal
         style="height: 600px"
-        default-view="month"
+        :default-view="'day'"
+        :active-view="'day'"
         :events="calendarEvents"
-        :disable-views="['years', 'year', 'day']"
+        :disable-views="['years', 'year', 'month', 'week']"
         :time-cell-height="22"
+        :editable-events="false"
+        :enable-date-change="false"
         @event-click="openMatchModal"
       />
     </div>
@@ -201,6 +197,7 @@ const getResultColor = (match) => {
   </div>
 </template>
 
+<!-- Styles pour le calendrier VueCal -->
 <style scoped>
 :deep(.vuecal__event-title),
 :deep(.vuecal__event-time) {
