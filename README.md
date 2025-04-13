@@ -23,7 +23,6 @@ npm run dev
 
 ```
 Installer et lancer l'api : https://github.com/ClementCatel/metrolympiades-api
-Pour plus de fonctionalité aller sur la branche https://github.com/Saloquin/Metrolympiades/tree/avec-modif-api qui contient une version modifiéde l'api 
 ## Technologies utilisées
 - Vue.js 3
 - Vue Router
