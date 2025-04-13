@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref,computed } from 'vue'
 import { useThemeStore } from '@/stores/theme'
 import { useLanguageStore } from '@/stores/language'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -16,11 +16,11 @@ const themeStore = useThemeStore()
 const languageStore = useLanguageStore()
 const showSettings = ref(false)
 
-const fontSizes = [
+const fontSizes = computed(() => [
   { label: languageStore.translate('small'), value: 'small' },
   { label: languageStore.translate('medium'), value: 'medium' },
   { label: languageStore.translate('large'), value: 'large' }
-]
+])
 
 const resetSettings = () => {
   if (props.showColorSettings) {
