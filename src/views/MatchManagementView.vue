@@ -1,19 +1,22 @@
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useUserStore } from '@/stores/user'
 import { fetchApi } from '@/ApiUtil'
 import MatchCard from '@/components/card/MatchCard.vue'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import TranslationText from '@/components/traductions/TranslationText.vue'
+import { useLanguageStore } from '@/stores/language'
+import { useUserStore } from '@/stores/user'
 import {
-  faTrash,
+  faChevronDown,
+  faChevronUp,
+  faList,
   faPlus,
   faSoccerBall,
-  faList,
-  faChevronDown,
-  faChevronUp
+  faTrash
 } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { onMounted, ref } from 'vue'
 
 const userStore = useUserStore()
+const languageStore = useLanguageStore()
 const isActivitySectionOpen = ref(false)
 
 const matches = ref([])
@@ -43,7 +46,7 @@ const loadData = async () => {
 
     await loadMatches()
   } catch (error) {
-    // console.error('Erreur lors du chargement des données:', error)
+    console.error('Error loading data:', error)
   }
 }
 
@@ -54,7 +57,7 @@ const loadMatches = async () => {
     })
     matches.value = matchData
   } catch (error) {
-    //console.error('Erreur lors du chargement des matchs:', error)
+    console.error('Error loading matches:', error)
   }
 }
 
@@ -78,15 +81,15 @@ const createMatch = async () => {
       })
       loadMatches()
     } catch (error) {
-      //console.error('Erreur lors de la création du match:', error)
+      console.error('Error creating match:', error)
     }
   } else {
-    alert('Veuillez remplir tous les champs nécessaires')
+    alert('Please fill in all required fields')
   }
 }
 
 const deleteMatch = async (matchId) => {
-  if (confirm('Êtes-vous sûr de vouloir supprimer ce match ?')) {
+  if (confirm('Are you sure you want to delete this match?')) {
     try {
       await fetchApi(`/matches/${matchId}`, {
         method: 'DELETE',
@@ -94,7 +97,7 @@ const deleteMatch = async (matchId) => {
       })
       loadMatches()
     } catch (error) {
-      //  console.error('Erreur lors de la suppression du match:', error)
+      console.error('Error deleting match:', error)
     }
   }
 }
@@ -111,7 +114,7 @@ const addActivity = async () => {
 
       newActivity.value = ''
     } catch (error) {
-      //console.error('Erreur lors de l’ajout de l’activité:', error)
+      console.error('Error adding activity:', error)
     }
   }
 }
@@ -131,7 +134,7 @@ onMounted(() => {
       <div @click="toggleActivitySection" class="flex items-center justify-between cursor-pointer">
         <h2 class="text-xl font-bold mb-4 flex items-center gap-2 theme-secondary">
           <FontAwesomeIcon :icon="faList" />
-          <span>Gérer les Activités</span>
+          <TranslationText text="manageActivities" />
         </h2>
         <FontAwesomeIcon
           :icon="isActivitySectionOpen ? faChevronUp : faChevronDown"
@@ -144,7 +147,7 @@ onMounted(() => {
           <input
             v-model="newActivity"
             type="text"
-            placeholder="Ajouter une activité"
+            :placeholder="languageStore.translate('addActivity')"
             class="p-2 border border-gray-300 rounded-lg flex-1 focus:ring-2 ring-primary"
           />
           <button
@@ -152,16 +155,20 @@ onMounted(() => {
             class="theme-primary-bg text-white px-4 py-2 rounded-lg hover:opacity-90 transition flex items-center gap-2 whitespace-nowrap"
           >
             <FontAwesomeIcon :icon="faPlus" />
-            <span>Ajouter</span>
+            <TranslationText text="add" />
           </button>
         </div>
 
         <div v-if="activities.length > 0">
-          <h3 class="text-lg font-semibold mb-4 theme-secondary">Activités actuelles</h3>
+          <h3 class="text-lg font-semibold mb-4 theme-secondary">
+            <TranslationText text="currentActivities" />
+          </h3>
           <table class="min-w-full table-auto border-collapse">
             <thead>
               <tr class="bg-gray-50">
-                <th class="px-4 py-2 text-left theme-primary">Nom de l'activité</th>
+                <th class="px-4 py-2 text-left theme-primary">
+                  <TranslationText text="activityName" />
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -175,18 +182,20 @@ onMounted(() => {
     </div>
     <h1 class="text-2xl font-bold mb-4 flex items-center gap-2 theme-primary">
       <FontAwesomeIcon :icon="faSoccerBall" />
-      <span>Gestion des Matchs</span>
+      <TranslationText text="matchManagement" />
     </h1>
 
     <!-- Formulaire pour créer un match -->
     <form @submit.prevent="createMatch" class="space-y-6 mb-8 bg-white p-6 rounded-lg shadow-lg">
       <div>
-        <label for="activity" class="block text-sm font-medium text-gray-700 mb-2">Activité</label>
+        <label for="activity" class="block text-sm font-medium text-gray-700 mb-2">
+          <TranslationText text="activity" />
+        </label>
         <select
           v-model="matchForm.activityId"
           class="border p-2 w-full rounded-lg shadow-sm focus:ring-2 ring-primary"
         >
-          <option value="">Choisir une activité</option>
+          <option value="">{{ languageStore.translate('chooseActivity') }}</option>
           <option v-for="activity in activities" :key="activity.id" :value="activity.id">
             {{ activity.name }}
           </option>
@@ -194,33 +203,39 @@ onMounted(() => {
       </div>
 
       <div>
-        <label for="team2" class="block text-sm font-medium text-gray-700">Équipe adverse</label>
+        <label for="team2" class="block text-sm font-medium text-gray-700">
+          <TranslationText text="opponentTeam" />
+        </label>
         <select
           v-model="matchForm.team2Id"
           class="focus:ring-2 ring-primary border p-2 w-full text-sm rounded-lg shadow-sm"
         >
-          <option value="">Choisir une équipe</option>
+          <option value="">{{ languageStore.translate('chooseTeam') }}</option>
           <option v-for="team in teams" :key="team.id" :value="team.id">{{ team.name }}</option>
         </select>
       </div>
 
       <div>
-        <label for="time" class="block text-sm font-medium text-gray-700">Heure du match</label>
+        <label for="time" class="block text-sm font-medium text-gray-700">
+          <TranslationText text="matchTime" />
+        </label>
         <input
           v-model="matchForm.time"
           type="time"
           class="border p-2 w-full text-sm rounded-lg shadow-sm focus:ring-2 ring-primary"
           required
         />
-        <p class="mt-1 text-sm text-gray-500">Le match sera programmé pour aujourd'hui</p>
+        <p class="mt-1 text-sm text-gray-500">
+          <TranslationText text="matchToday" />
+        </p>
       </div>
 
       <!-- Score -->
       <div class="flex space-x-4">
         <div class="flex-1">
-          <label for="team1Score" class="block text-sm font-medium text-gray-700"
-            >Notre score</label
-          >
+          <label for="team1Score" class="block text-sm font-medium text-gray-700">
+            <TranslationText text="ourScore" />
+          </label>
           <input
             v-model="matchForm.team1Score"
             type="number"
@@ -230,9 +245,9 @@ onMounted(() => {
           />
         </div>
         <div class="flex-1">
-          <label for="team2Score" class="block text-sm font-medium text-gray-700"
-            >Score adverse</label
-          >
+          <label for="team2Score" class="block text-sm font-medium text-gray-700">
+            <TranslationText text="opponentScore" />
+          </label>
           <input
             v-model="matchForm.team2Score"
             type="number"
@@ -248,7 +263,7 @@ onMounted(() => {
         class="theme-primary-bg text-white px-4 py-2 rounded-lg hover:opacity-90 transition flex items-center gap-2"
       >
         <FontAwesomeIcon :icon="faPlus" />
-        <span>Créer le match</span>
+        <TranslationText text="createMatch" />
       </button>
     </form>
 
@@ -256,10 +271,10 @@ onMounted(() => {
     <div class="bg-white p-6 rounded-lg shadow-lg mb-8">
       <h2 class="text-xl font-bold mb-4 flex items-center gap-2 theme-secondary">
         <FontAwesomeIcon :icon="faList" />
-        <span>Tous les matchs</span>
+        <TranslationText text="allMatches" />
       </h2>
 
-      <div class="space-y-4 ">
+      <div class="space-y-4">
         <div v-for="match in matches" :key="match.id" class="flex items-center gap-4">
           <div class="flex-grow">
             <MatchCard
@@ -275,7 +290,9 @@ onMounted(() => {
           </button>
         </div>
 
-        <p v-if="matches.length === 0" class="text-center text-gray-500 py-4">Aucun match trouvé</p>
+        <p v-if="matches.length === 0" class="text-center text-gray-500 py-4">
+          <TranslationText text="noMatchesFound" />
+        </p>
       </div>
     </div>
   </div>

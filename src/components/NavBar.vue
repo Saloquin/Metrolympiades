@@ -1,10 +1,12 @@
 <script setup>
-import { ref } from 'vue'
-import { useUserStore } from '@/stores/user'
-import { useRouter } from 'vue-router'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faBars, faTimes, faChevronDown } from '@fortawesome/free-solid-svg-icons'
 import { useThemeStore } from '@/stores/theme'
+import { useUserStore } from '@/stores/user'
+import { faBars, faChevronDown, faTimes } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import LanguageSelector from './traductions/LanguageSelector.vue'
+import TranslationText from './traductions/TranslationText.vue'
 
 const userStore = useUserStore()
 const themeStore = useThemeStore()
@@ -20,6 +22,7 @@ const logout = () => {
   themeStore.initializeFontSizeOnly()
   router.push('/')
 }
+
 const handleDropdownHover = (dropdown, isHovered) => {
   if (timeoutId.value) {
     clearTimeout(timeoutId.value)
@@ -67,10 +70,15 @@ const handleDropdownHover = (dropdown, isHovered) => {
 
     <!-- Desktop menu -->
     <div class="hidden lg:flex gap-4 items-center">
-      <RouterLink class="text-gray-700 hover:text-primary" to="/ranking">Classement</RouterLink>
+      <LanguageSelector />
+      <RouterLink class="text-gray-700 hover:text-primary" to="/ranking">
+        <TranslationText text="ranking" />
+      </RouterLink>
 
       <template v-if="userStore.currentUser">
-        <RouterLink class="text-gray-700 hover:text-primary" to="/dashboard">Dashboard</RouterLink>
+        <RouterLink class="text-gray-700 hover:text-primary" to="/dashboard">
+          <TranslationText text="dashboard" />
+        </RouterLink>
 
         <!-- Mes Infos Dropdown -->
         <div
@@ -81,7 +89,7 @@ const handleDropdownHover = (dropdown, isHovered) => {
           <button
             class="text-gray-700 hover:text-secondary focus:outline-none flex items-center gap-1"
           >
-            Mes Infos
+            <TranslationText text="myInfo" />
             <FontAwesomeIcon :icon="faChevronDown" class="h-4 w-4" />
           </button>
           <div
@@ -94,7 +102,7 @@ const handleDropdownHover = (dropdown, isHovered) => {
                   to="/team"
                   class="block px-4 py-2 text-gray-700 hover:text-primary hover:bg-gray-100 transition-colors duration-150"
                 >
-                  Mon équipe
+                  <TranslationText text="myTeam" />
                 </RouterLink>
               </li>
               <li>
@@ -102,7 +110,7 @@ const handleDropdownHover = (dropdown, isHovered) => {
                   to="/matches"
                   class="block px-4 py-2 text-gray-700 hover:text-primary hover:bg-gray-100 transition-colors duration-150"
                 >
-                  Mes matchs
+                  <TranslationText text="myMatches" />
                 </RouterLink>
               </li>
             </ul>
@@ -118,7 +126,7 @@ const handleDropdownHover = (dropdown, isHovered) => {
           <button
             class="text-gray-700 hover:text-secondary focus:outline-none flex items-center gap-1"
           >
-            Management
+            <TranslationText text="management" />
             <FontAwesomeIcon :icon="faChevronDown" class="h-4 w-4" />
           </button>
           <div
@@ -131,7 +139,7 @@ const handleDropdownHover = (dropdown, isHovered) => {
                   to="/manage-members"
                   class="block px-4 py-2 text-gray-700 hover:text-primary hover:bg-gray-100 transition-colors duration-150"
                 >
-                  Gérer l'équipe
+                  <TranslationText text="teamManagement" />
                 </RouterLink>
               </li>
               <li>
@@ -139,21 +147,25 @@ const handleDropdownHover = (dropdown, isHovered) => {
                   to="/manage-match"
                   class="block px-4 py-2 text-gray-700 hover:text-primary hover:bg-gray-100 transition-colors duration-150"
                 >
-                  Gérer les matchs
+                  <TranslationText text="manageMatches" />
                 </RouterLink>
               </li>
             </ul>
           </div>
         </div>
 
-        <button @click="logout" class="text-red-600 hover:text-red-800">Déconnexion</button>
+        <button @click="logout" class="text-red-600 hover:text-red-800">
+          <TranslationText text="logout" />
+        </button>
       </template>
 
       <template v-else>
-        <RouterLink class="text-gray-700 hover:theme-primary" to="/login">Connexion</RouterLink>
-        <RouterLink class="text-gray-700 hover:theme-primary" to="/register"
-          >S'enregistrer</RouterLink
-        >
+        <RouterLink class="text-gray-700 hover:theme-primary" to="/login">
+          <TranslationText text="login" />
+        </RouterLink>
+        <RouterLink class="text-gray-700 hover:theme-primary" to="/register">
+          <TranslationText text="register" />
+        </RouterLink>
       </template>
     </div>
 
@@ -181,45 +193,49 @@ const handleDropdownHover = (dropdown, isHovered) => {
             class="block px-4 py-2 text-gray-700 hover:theme-primary"
             @click="showMobileMenu = false"
           >
-            Classement
+            <TranslationText text="ranking" />
           </RouterLink>
 
           <template v-if="userStore.currentUser">
             <!-- Mes Infos Section -->
             <div class="px-4 py-2 border-t">
-              <div class="font-medium text-gray-700 mb-2">Mes Infos</div>
+              <div class="font-medium text-gray-700 mb-2">
+                <TranslationText text="myInfo" />
+              </div>
               <RouterLink
                 to="/team"
                 class="block pl-4 py-2 text-gray-600 hover:theme-primary"
                 @click="showMobileMenu = false"
               >
-                Mon équipe
+                <TranslationText text="myTeam" />
               </RouterLink>
               <RouterLink
                 to="/next-matches"
                 class="block pl-4 py-2 text-gray-600 hover:theme-primary"
                 @click="showMobileMenu = false"
               >
-                Mes matchs
+                <TranslationText text="myMatches" />
               </RouterLink>
             </div>
 
             <!-- Management Section -->
             <div class="px-4 py-2 border-t border-b">
-              <div class="font-medium text-gray-700 mb-2">Management</div>
+              <div class="font-medium text-gray-700 mb-2">
+                <TranslationText text="management" />
+              </div>
               <RouterLink
                 to="/manage-members"
                 class="block pl-4 py-2 text-gray-600 hover:theme-primary"
                 @click="showMobileMenu = false"
               >
-                Gérer l'équipe
+                <TranslationText text="teamManagement" />
               </RouterLink>
               <RouterLink
                 to="/manage-match"
                 class="block pl-4 py-2 text-gray-600 hover:theme-primary"
                 @click="showMobileMenu = false"
               >
-                Gérer les matchs
+                <TranslationText text="manageMatches" />
               </RouterLink>
             </div>
           </template>
@@ -230,18 +246,20 @@ const handleDropdownHover = (dropdown, isHovered) => {
               class="block px-4 py-2 text-gray-700 hover:theme-primary"
               @click="showMobileMenu = false"
             >
-              Connexion
+              <TranslationText text="login" />
             </RouterLink>
             <RouterLink
               to="/register"
               class="block px-4 py-2 text-gray-700 hover:theme-primary"
               @click="showMobileMenu = false"
             >
-              S'enregistrer
+              <TranslationText text="register" />
             </RouterLink>
           </template>
           <div class="px-4 py-2">
-            <button @click="logout" class="text-red-600 hover:text-red-800">Déconnexion</button>
+            <button @click="logout" class="text-red-600 hover:text-red-800">
+              <TranslationText text="logout" />
+            </button>
           </div>
         </div>
       </div>

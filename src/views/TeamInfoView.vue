@@ -5,7 +5,7 @@ import { useUserStore } from '@/stores/user'
 import { faTrophy, faUser, faCogs } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import MemberCard from '@/components/card/MemberCard.vue'
-
+import TranslationText from '@/components/traductions/TranslationText.vue'
 
 const userStore = useUserStore()
 const team = ref(userStore.currentUser?.team)
@@ -25,7 +25,7 @@ onMounted(async () => {
 
       victories.value = calculateVictories(matches)
     } catch (error) {
-      //erreur lors du chargement des données
+      // Erreur lors du chargement des données
     }
   }
 })
@@ -52,17 +52,20 @@ const calculateVictories = (matches) => {
     <!-- Header avec les informations -->
     <div class="flex justify-between items-center mb-6">
       <h1 class="text-2xl font-bold theme-primary flex items-center">
-        <FontAwesomeIcon :icon="faUser" class="mr-2" /> Informations sur l'équipe
+        <FontAwesomeIcon :icon="faUser" class="mr-2" />
+        <TranslationText text="teamInfoHeader" />
       </h1>
       <div class="text-lg font-semibold theme-secondary flex items-center">
         <FontAwesomeIcon :icon="faTrophy" class="mr-2" />
-        <span>Victoires: {{ victories }}</span>
+        <span> <TranslationText text="victories" />: {{ victories }} </span>
       </div>
     </div>
 
     <!-- Section Nom d'équipe -->
     <div class="mt-6">
-      <h2 class="text-xl font-semibold theme-secondary">Nom d'équipe</h2>
+      <h2 class="text-xl font-semibold theme-secondary">
+        <TranslationText text="teamName" />
+      </h2>
       <p class="text-lg font-semibold text-gray-900">{{ team?.name }}</p>
     </div>
 
@@ -73,22 +76,19 @@ const calculateVictories = (matches) => {
         class="px-4 py-2 theme-primary-bg text-white rounded-lg hover:opacity-90 focus:outline-none transition"
       >
         <FontAwesomeIcon :icon="faCogs" class="mr-2" />
-        Gerer l'équipe
+        <TranslationText text="manageTeam" />
       </RouterLink>
     </div>
+
+    <!-- Membres actuels -->
     <div class="mt-6">
-    <h2 class="text-xl font-semibold theme-secondary mb-4">Membres actuels</h2>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      <MemberCard 
-        :name="userStore.currentUser.name"
-        :is-current-user="true"
-      />
-      <MemberCard
-        v-for="(member, index) in team?.members"
-        :key="index"
-        :name="member"
-      />
+      <h2 class="text-xl font-semibold theme-secondary mb-4">
+        <TranslationText text="currentMembers" />
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <MemberCard :name="userStore.currentUser.name" :is-current-user="true" />
+        <MemberCard v-for="(member, index) in team?.members" :key="index" :name="member" />
+      </div>
     </div>
-  </div>
   </div>
 </template>

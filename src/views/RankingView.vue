@@ -27,9 +27,11 @@ onMounted(() => {
 
 <template>
   <div class="p-6 max-w-4xl mx-auto">
-    <h1 class="text-3xl font-bold text-center theme-primary mb-6 flex items-center justify-center gap-2">
+    <h1
+      class="text-3xl font-bold text-center theme-primary mb-6 flex items-center justify-center gap-2"
+    >
       <FontAwesomeIcon :icon="faTrophy" class="text-yellow-500" />
-      Classement des équipes
+      <TranslationText text="ranking" />
     </h1>
 
     <div class="space-y-4">
