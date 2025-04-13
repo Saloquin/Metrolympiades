@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useThemeStore } from '@/stores/theme'
+import { useLanguageStore } from '@/stores/language'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faPalette, faTextHeight, faRotateLeft } from '@fortawesome/free-solid-svg-icons'
 
@@ -12,12 +13,13 @@ const props = defineProps({
 })
 
 const themeStore = useThemeStore()
+const languageStore = useLanguageStore()
 const showSettings = ref(false)
 
 const fontSizes = [
-  { label: 'Small', value: 'small' },
-  { label: 'Medium', value: 'medium' },
-  { label: 'Large', value: 'large' }
+  { label: languageStore.translate('small'), value: 'small' },
+  { label: languageStore.translate('medium'), value: 'medium' },
+  { label: languageStore.translate('large'), value: 'large' }
 ]
 
 const resetSettings = () => {
@@ -43,11 +45,17 @@ const resetSettings = () => {
       class="absolute bottom-16 right-0 bg-white p-4 rounded-lg shadow-xl w-64"
     >
       <div class="flex justify-between items-center mb-4">
-        <h3 class="text-lg font-semibold">Paramètres</h3>
+        <h3 class="text-lg font-semibold">
+          <TranslationText text="settings" />
+        </h3>
         <button
           @click="resetSettings"
           class="text-gray-600 hover:text-gray-800 p-2 rounded-full hover:bg-gray-100"
-          :title="showColorSettings ? 'Réinitialiser tout' : 'Réinitialiser la taille du texte'"
+          :title="
+            showColorSettings
+              ? languageStore.translate('resetAll')
+              : languageStore.translate('resetFontSize')
+          "
         >
           <FontAwesomeIcon :icon="faRotateLeft" />
         </button>
@@ -56,7 +64,9 @@ const resetSettings = () => {
       <!-- Color settings only shown when logged in -->
       <template v-if="showColorSettings">
         <div class="mb-4">
-          <label class="block text-sm font-medium mb-2">Couleur principale</label>
+          <label class="block text-sm font-medium mb-2">
+            <TranslationText text="primaryColor" />
+          </label>
           <input
             type="color"
             :value="themeStore.primaryColor"
@@ -66,7 +76,9 @@ const resetSettings = () => {
         </div>
 
         <div class="mb-4">
-          <label class="block text-sm font-medium mb-2">Couleur secondaire</label>
+          <label class="block text-sm font-medium mb-2">
+            <TranslationText text="secondaryColor" />
+          </label>
           <input
             type="color"
             :value="themeStore.secondaryColor"
@@ -80,7 +92,7 @@ const resetSettings = () => {
       <div class="mb-4">
         <label class="block text-sm font-medium mb-2">
           <FontAwesomeIcon :icon="faTextHeight" class="mr-2" />
-          Taille du texte
+          <TranslationText text="fontSize" />
         </label>
         <select
           :value="themeStore.fontSize"

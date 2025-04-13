@@ -14,6 +14,17 @@ export default {
   logout: 'Logout',
   teamManagement: 'Team Management',
 
+  // Settings
+  settings: 'Settings',
+  resetAll: 'Reset All',
+  resetFontSize: 'Reset Font Size',
+  primaryColor: 'Primary Color',
+  secondaryColor: 'Secondary Color',
+  fontSize: 'Font Size',
+  small: 'Small',
+  medium: 'Medium',
+  large: 'Large',
+
   // Dashboard
   dashboardGreeting: 'Hello, {name}',
   email: 'Email',
@@ -74,12 +85,11 @@ export default {
   currentMembers: 'Current Members',
 
   // Team Management
-  editTeamName: "Edit Team Name",
-  enterNewTeamName: "Enter the new team name",
-  updateTeamName: "Update Team Name",
-  manageMembers: "Manage Members",
-  enterMemberName: "Enter a member name",
-  addMember: "Add Member",
-  noMembers: "No members in the team",
-
+  editTeamName: 'Edit Team Name',
+  enterNewTeamName: 'Enter the new team name',
+  updateTeamName: 'Update Team Name',
+  manageMembers: 'Manage Members',
+  enterMemberName: 'Enter a member name',
+  addMember: 'Add Member',
+  noMembers: 'No members in the team'
 }

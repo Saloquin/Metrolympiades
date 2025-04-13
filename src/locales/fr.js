@@ -14,6 +14,17 @@ export default {
   logout: 'Déconnexion',
   teamManagement: 'Gestion de l’équipe',
 
+  // Settings
+  settings: 'Paramètres',
+  resetAll: 'Réinitialiser tout',
+  resetFontSize: 'Réinitialiser la taille du texte',
+  primaryColor: 'Couleur principale',
+  secondaryColor: 'Couleur secondaire',
+  fontSize: 'Taille du texte',
+  small: 'Petit',
+  medium: 'Moyen',
+  large: 'Grand',
+  
   // Dashboard
   dashboardGreeting: 'Bonjour, {name}',
   email: 'Adresse e-mail',
