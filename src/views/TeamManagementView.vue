@@ -67,7 +67,7 @@ const updateTeamName = async () => {
       // Vérifie si le nom est déjà pris par une autre équipe
       const isTaken = teams.some(team =>
         team.name.toLowerCase() === trimmedName.toLowerCase() &&
-        team.id !== userStore.currentUser.team.id // s'assurer que ce n'est pas notre propre équipe
+        team.id !== userStore.currentUser.team.id 
       )
 
       if (isTaken) {
@@ -85,7 +85,7 @@ const updateTeamName = async () => {
       team.value.name = trimmedName
       userStore.currentUser.team.name = trimmedName
     } catch (error) {
-      alert('Erreur lors de la mise à jour du nom de l’équipe.')
+      
     }
   }
 }
