@@ -91,5 +91,8 @@ export default {
   manageMembers: 'Manage Members',
   enterMemberName: 'Enter a member name',
   addMember: 'Add Member',
-  noMembers: 'No members in the team'
+  noMembers: 'No members in the team',
+
+  // Date Error
+  scoreDisabledWarning: "Scores can only be entered for completed matches. Match ended at {endTime}, current time {currentTime}."
 }

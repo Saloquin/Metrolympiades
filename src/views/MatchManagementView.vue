@@ -13,7 +13,7 @@ import {
   faTrash
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 
 const userStore = useUserStore()
 const languageStore = useLanguageStore()
@@ -31,6 +31,9 @@ const newActivity = ref('')
 
 const activities = ref([])
 const teams = ref([])
+const isScoreDisabled = ref(false)
+const calculatedStartedAt = ref(null)
+
 
 const loadData = async () => {
   try {
@@ -64,9 +67,19 @@ const loadMatches = async () => {
 const createMatch = async () => {
   if (matchForm.value.activityId && matchForm.value.team2Id && matchForm.value.time) {
     try {
-      const today = new Date()
+      const now = new Date()
+      const matchTime = new Date()
       const [hours, minutes] = matchForm.value.time.split(':')
-      today.setHours(parseInt(hours), parseInt(minutes), 0, 0)
+      matchTime.setHours(parseInt(hours), parseInt(minutes), 0, 0)
+
+      const oneHourLater = new Date()
+      oneHourLater.setHours(now.getHours() - 1)
+
+      if (matchTime > oneHourLater) {
+        isScoreDisabled.value = true 
+      } else {
+        isScoreDisabled.value = false 
+      }
 
       await fetchApi('/matches', {
         method: 'POST',
@@ -74,7 +87,7 @@ const createMatch = async () => {
         body: JSON.stringify({
           team2Id: matchForm.value.team2Id,
           activityId: matchForm.value.activityId,
-          startedAt: today.toISOString(),
+          startedAt: matchTime.toISOString(),
           team1Score: matchForm.value.team1Score,
           team2Score: matchForm.value.team2Score
         })
@@ -126,7 +139,36 @@ const toggleActivitySection = () => {
 onMounted(() => {
   loadData()
 })
+
+watch(
+  () => matchForm.value.time,
+  (newTime) => {
+    if (!newTime) {
+      isScoreDisabled.value = false
+      calculatedStartedAt.value = null
+      return
+    }
+
+    const now = new Date()
+    const [hours, minutes] = newTime.split(':')
+    const matchTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), parseInt(hours), parseInt(minutes))
+    
+    const matchHour = parseInt(hours)
+    const matchMinute = parseInt(minutes)
+    const endMatchTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), matchHour + 1, matchMinute)
+    calculatedStartedAt.value = endMatchTime
+
+    const oneHourAgo = new Date()
+    oneHourAgo.setHours(now.getHours() - 1)
+
+    isScoreDisabled.value = matchTime > oneHourAgo
+  }
+)
+
+
+
 </script>
+
 
 <template>
   <div class="p-6 max-w-4xl mx-auto">
@@ -229,6 +271,18 @@ onMounted(() => {
           <TranslationText text="matchToday" />
         </p>
       </div>
+      
+      <p v-if="isScoreDisabled" class="text-sm text-red-600 mt-2 p-3 bg-red-100 border border-red-400 rounded-lg">
+        <TranslationText 
+          text="scoreDisabledWarning" 
+          :params="{
+            endTime: calculatedStartedAt ? calculatedStartedAt.toLocaleString(languageStore.language, { timeStyle: 'short' }) : '',
+            currentTime: new Date().toLocaleTimeString(languageStore.language, { timeStyle: 'short' })
+          }" />
+      </p>
+
+
+
 
       <!-- Score -->
       <div class="flex space-x-4">
@@ -238,6 +292,7 @@ onMounted(() => {
           </label>
           <input
             v-model="matchForm.team1Score"
+            :disabled="isScoreDisabled"
             type="number"
             min="0"
             max="100"
@@ -250,6 +305,7 @@ onMounted(() => {
           </label>
           <input
             v-model="matchForm.team2Score"
+            :disabled="isScoreDisabled"
             type="number"
             min="0"
             max="100"
@@ -259,12 +315,13 @@ onMounted(() => {
       </div>
 
       <button
+        :disabled="!matchForm.activityId || !matchForm.team2Id || !matchForm.time || isScoreDisabled"
         type="submit"
-        class="theme-primary-bg text-white px-4 py-2 rounded-lg hover:opacity-90 transition flex items-center gap-2"
-      >
+        class="theme-primary-bg text-white px-4 py-2 rounded-lg hover:opacity-90 transition flex items-center gap-2 disabled:opacity-50">
         <FontAwesomeIcon :icon="faPlus" />
         <TranslationText text="createMatch" />
       </button>
+
     </form>
 
     <!-- Tableau des matchs -->

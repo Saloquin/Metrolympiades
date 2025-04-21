@@ -92,4 +92,10 @@ export default {
   enterMemberName: "Entrer un nom de membre",
   addMember: "Ajouter un membre",
   noMembers: "Aucun membre dans l'équipe",
+
+
+  // Date Error
+  
+    scoreDisabledWarning: "Les scores ne peuvent être saisis que pour les matchs terminés. Match terminé à {endTime}, heure actuelle {currentTime}."
+  
 }

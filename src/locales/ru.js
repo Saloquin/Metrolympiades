@@ -91,5 +91,8 @@ export default {
     manageMembers: 'Управление участниками',
     enterMemberName: 'Введите имя участника',
     addMember: 'Добавить участника',
-    noMembers: 'В команде нет участников'
+    noMembers: 'В команде нет участников',
+
+    // Date Error
+    scoreDisabledWarning: "Очки можно вводить только для завершенных матчей. Игра завершена в {endTime}, текущее время {currentTime}."
   }

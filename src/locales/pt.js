@@ -91,5 +91,8 @@ export default {
     manageMembers: 'Gerenciar Membros',
     enterMemberName: 'Digite o nome do membro',
     addMember: 'Adicionar Membro',
-    noMembers: 'Nenhum membro na equipe'
+    noMembers: 'Nenhum membro na equipe',
+
+    // Date Error
+    scoreDisabledWarning: "Os pontuações só podem ser inseridas para partidas concluídas. Partida terminada às {endTime}, hora atual {currentTime}."
   }

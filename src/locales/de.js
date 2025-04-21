@@ -91,5 +91,8 @@ export default {
   manageMembers: 'Mitglieder verwalten',
   enterMemberName: 'Mitgliedsnamen eingeben',
   addMember: 'Mitglied hinzufügen',
-  noMembers: 'Keine Mitglieder im Team'
+  noMembers: 'Keine Mitglieder im Team',
+
+  // Date Error
+  scoreDisabledWarning: "Punkte können nur für abgeschlossene Spiele eingegeben werden. Das Spiel endete um {endTime}, aktuelle Uhrzeit {currentTime}."
 }

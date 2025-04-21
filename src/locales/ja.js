@@ -91,5 +91,8 @@ export default {
     manageMembers: 'メンバー管理',
     enterMemberName: 'メンバー名を入力',
     addMember: 'メンバーを追加',
-    noMembers: 'チームにメンバーがいません'
+    noMembers: 'チームにメンバーがいません',
+
+    // Date Error
+    scoreDisabledWarning: "スコアは終了した試合のみ入力できます。試合終了時間：{endTime}、現在の時間：{currentTime}。"
   }

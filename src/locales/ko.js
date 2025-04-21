@@ -91,5 +91,8 @@ export default {
     manageMembers: '멤버 관리',
     enterMemberName: '멤버 이름 입력',
     addMember: '멤버 추가',
-    noMembers: '팀에 멤버가 없습니다'
+    noMembers: '팀에 멤버가 없습니다',
+
+    // Date Error
+    scoreDisabledWarning: "점수는 종료된 경기에서만 입력할 수 있습니다. 경기는 {endTime}에 종료되었으며, 현재 시간은 {currentTime}입니다."
   }
