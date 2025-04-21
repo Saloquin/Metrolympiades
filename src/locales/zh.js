@@ -91,5 +91,8 @@ export default {
     manageMembers: '管理成员',
     enterMemberName: '输入成员名称',
     addMember: '添加成员',
-    noMembers: '团队中没有成员'
+    noMembers: '团队中没有成员',
+
+    // Date Error
+    scoreDisabledWarning: "只有在比赛结束后才能输入分数。比赛结束时间：{endTime}，当前时间：{currentTime}。"
   }
