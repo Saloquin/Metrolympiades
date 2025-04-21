@@ -54,20 +54,42 @@ const addMember = async () => {
 }
 
 const updateTeamName = async () => {
-  if (newTeamName.value.trim()) {
+  const trimmedName = newTeamName.value.trim()
+
+  if (trimmedName) {
     try {
+      // Récupération de toutes les équipes
+      const teams = await fetchApi('/teams', {
+        method: 'GET',
+        headers: { Authorization: `Bearer ${userStore.token}` }
+      })
+
+      // Vérifie si le nom est déjà pris par une autre équipe
+      const isTaken = teams.some(team =>
+        team.name.toLowerCase() === trimmedName.toLowerCase() &&
+        team.id !== userStore.currentUser.team.id // s'assurer que ce n'est pas notre propre équipe
+      )
+
+      if (isTaken) {
+        alert('Ce nom d’équipe est déjà utilisé par une autre équipe.')
+        return
+      }
+
+      // Mise à jour du nom de l'équipe
       await fetchApi('/teams/me', {
         method: 'PUT',
         headers: { Authorization: `Bearer ${userStore.token}` },
-        body: JSON.stringify({ name: newTeamName.value })
+        body: JSON.stringify({ name: trimmedName })
       })
-      team.value.name = newTeamName.value
-      userStore.currentUser.team.name = newTeamName.value
+
+      team.value.name = trimmedName
+      userStore.currentUser.team.name = trimmedName
     } catch (error) {
-      // Erreur lors de la mise à jour du nom de l'équipe
+      alert('Erreur lors de la mise à jour du nom de l’équipe.')
     }
   }
 }
+
 
 const removeMember = async (member) => {
   try {
