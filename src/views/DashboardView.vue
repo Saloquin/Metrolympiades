@@ -2,7 +2,7 @@
 import { fetchApi } from '@/ApiUtil'
 import MatchHistoryCard from '@/components/card/MatchHistoryCard.vue'
 import TranslationText from '@/components/traductions/TranslationText.vue'
-import { useLanguageStore } from '@/stores/language' // Import du store de langue
+import { useLanguageStore } from '@/stores/language'
 import { useUserStore } from '@/stores/user'
 import {
   faCalendar,
@@ -13,7 +13,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { ArcElement, Chart as ChartJS, Legend, Tooltip } from 'chart.js'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import VueCal from 'vue-cal'
 import { Pie } from 'vue-chartjs'
 
@@ -41,6 +41,33 @@ const closeMatchModal = () => {
 
 const calendarEvents = ref([])
 
+const today = new Date()
+const isTodayView = ref(true)
+
+const handleViewChange = ({ startDate }) => {
+  const selectedDate = new Date(startDate)
+  const todayDate = new Date(today)
+  isTodayView.value = selectedDate.toDateString() === todayDate.toDateString()
+
+  if (selectedDate > today) {
+    vueCalRef.value?.scrollToTime?.('00:00')
+    vueCalRef.value?.goToDate(today)
+  }
+}
+
+const vueCalRef = ref(null)
+
+const updateArrowState = (isToday) => {
+  const nextArrow = document.querySelector('.vuecal__arrow--next')
+  if (nextArrow) {
+    if (isToday) {
+      nextArrow.classList.add('disabled-arrow')
+    } else {
+      nextArrow.classList.remove('disabled-arrow')
+    }
+  }
+}
+
 onMounted(async () => {
   if (userStore.currentUser) {
     try {
@@ -49,6 +76,7 @@ onMounted(async () => {
           Authorization: `Bearer ${userStore.token}`
         }
       })
+
       const pastMatches = matchData
         .filter((match) => new Date(match.startedAt) < new Date())
         .sort((a, b) => new Date(b.startedAt) - new Date(a.startedAt))
@@ -75,7 +103,6 @@ onMounted(async () => {
 
       nextMatches.value = matchData
 
-      // Génération des événements pour le calendrier
       calendarEvents.value = matchData.map((match) => {
         const opponent = userStore.currentUser.team === match.team1 ? match.team2 : match.team1
         return {
@@ -85,15 +112,25 @@ onMounted(async () => {
           originalMatch: match
         }
       })
+
+      
+      updateArrowState(isTodayView.value)
+
     } catch (error) {
-      // Erreur lors du chargement des matchs
+      // Gérer l'erreur
     }
   }
+})
+
+
+watch(isTodayView, (newVal) => {
+  updateArrowState(newVal)
 })
 </script>
 
 <template>
   <div class="p-6 max-w-4xl mx-auto">
+    <!-- Header + Pie Chart -->
     <div class="flex justify-between items-center mb-8">
       <div>
         <h1 class="text-3xl font-bold theme-secondary">
@@ -106,7 +143,6 @@ onMounted(async () => {
           <TranslationText text="email" />: {{ userStore.currentUser?.email }}
         </p>
       </div>
-      <!-- Graphique des résultats -->
       <div class="w-1/3">
         <Pie
           :data="{
@@ -137,7 +173,7 @@ onMounted(async () => {
       </div>
     </div>
 
-    <!-- Bouton vers "InfoTeam" -->
+    <!-- Boutons -->
     <div class="mb-8 flex gap-4">
       <RouterLink
         to="/team"
@@ -146,7 +182,6 @@ onMounted(async () => {
         <FontAwesomeIcon :icon="faUserFriends" class="mr-2" />
         <TranslationText text="viewTeamInfo" />
       </RouterLink>
-
       <RouterLink
         to="/ranking"
         class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-opacity flex items-center"
@@ -156,7 +191,7 @@ onMounted(async () => {
       </RouterLink>
     </div>
 
-    <!-- Historique des matchs -->
+    <!-- Historique -->
     <h2 class="text-2xl font-bold mb-4 theme-secondary">
       <TranslationText text="matchHistory" /> <FontAwesomeIcon :icon="faClipboard" />
     </h2>
@@ -172,12 +207,13 @@ onMounted(async () => {
       </p>
     </div>
 
-    <!-- Prochains matchs -->
+    <!-- Calendrier -->
     <h2 class="text-2xl font-bold mb-4 theme-secondary">
       <TranslationText text="matchCalendar" /> <FontAwesomeIcon :icon="faCalendar" />
     </h2>
     <div class="border border-gray-300 rounded-lg p-4 mb-8">
       <VueCal
+        ref="vueCalRef"
         style="height: 600px"
         :default-view="'day'"
         :active-view="'day'"
@@ -187,10 +223,11 @@ onMounted(async () => {
         :editable-events="false"
         :enable-date-change="false"
         @event-click="openMatchModal"
+        @view-change="handleViewChange"
       />
     </div>
 
-    <!-- Modal de match -->
+    <!-- Modal -->
     <div
       v-if="showModal"
       class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
@@ -202,31 +239,27 @@ onMounted(async () => {
         >
           <FontAwesomeIcon :icon="faXmark" class="text-2xl" />
         </button>
-
         <h3 class="text-2xl font-bold mb-2">
           <TranslationText text="matchDetails" />
         </h3>
+        <p><strong><TranslationText text="activity" />:</strong> {{ selectedMatch.activity }}</p>
         <p>
-          <strong><TranslationText text="activity" />:</strong> {{ selectedMatch.activity }}
-        </p>
-        <p>
-          <strong><TranslationText text="teams" />:</strong> {{ selectedMatch.team1 }} vs
-          {{ selectedMatch.team2 }}
+          <strong><TranslationText text="teams" />:</strong>
+          {{ selectedMatch.team1 }} vs {{ selectedMatch.team2 }}
         </p>
         <p>
           <strong><TranslationText text="date" />:</strong>
           {{ new Date(selectedMatch.startedAt).toLocaleString() }}
         </p>
         <p>
-          <strong><TranslationText text="score" />:</strong> {{ selectedMatch.team1Score }} -
-          {{ selectedMatch.team2Score }}
+          <strong><TranslationText text="score" />:</strong>
+          {{ selectedMatch.team1Score }} - {{ selectedMatch.team2Score }}
         </p>
       </div>
     </div>
   </div>
 </template>
 
-<!-- Styles pour le calendrier VueCal -->
 <style scoped>
 :deep(.vuecal__event-title),
 :deep(.vuecal__event-time) {
@@ -248,5 +281,8 @@ onMounted(async () => {
   position: absolute;
   top: 6px;
   right: 1px;
+}
+:deep(.vuecal__arrow.vuecal__arrow--next.disabled-arrow) {
+  display: none !important;
 }
 </style>
