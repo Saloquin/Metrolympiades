@@ -18,6 +18,15 @@ const router = useRouter()
 // Fonction d'inscription
 const register = async () => {
   try {
+    const teams = await fetchApi('/teams', { method: 'GET' })
+
+    const isTeamNameTaken = teams.some(team => team.name.toLowerCase() === teamName.value.trim().toLowerCase())
+
+    if (isTeamNameTaken) {
+      alert('Ce nom d’équipe est déjà pris. Veuillez en choisir un autre.')
+      return
+    }
+
     const response = await fetchApi('/auth/register', {
       method: 'POST',
       body: JSON.stringify({
