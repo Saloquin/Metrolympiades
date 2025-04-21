@@ -13,7 +13,7 @@ import {
   faTrash
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 
 const userStore = useUserStore()
 const languageStore = useLanguageStore()
@@ -31,6 +31,7 @@ const newActivity = ref('')
 
 const activities = ref([])
 const teams = ref([])
+const isScoreDisabled = ref(false)
 
 const loadData = async () => {
   try {
@@ -64,9 +65,19 @@ const loadMatches = async () => {
 const createMatch = async () => {
   if (matchForm.value.activityId && matchForm.value.team2Id && matchForm.value.time) {
     try {
-      const today = new Date()
+      const now = new Date()
+      const matchTime = new Date()
       const [hours, minutes] = matchForm.value.time.split(':')
-      today.setHours(parseInt(hours), parseInt(minutes), 0, 0)
+      matchTime.setHours(parseInt(hours), parseInt(minutes), 0, 0)
+
+      const oneHourLater = new Date()
+      oneHourLater.setHours(now.getHours() - 1)
+
+      if (matchTime > oneHourLater) {
+        isScoreDisabled.value = true 
+      } else {
+        isScoreDisabled.value = false 
+      }
 
       await fetchApi('/matches', {
         method: 'POST',
@@ -74,7 +85,7 @@ const createMatch = async () => {
         body: JSON.stringify({
           team2Id: matchForm.value.team2Id,
           activityId: matchForm.value.activityId,
-          startedAt: today.toISOString(),
+          startedAt: matchTime.toISOString(),
           team1Score: matchForm.value.team1Score,
           team2Score: matchForm.value.team2Score
         })
@@ -126,7 +137,27 @@ const toggleActivitySection = () => {
 onMounted(() => {
   loadData()
 })
+
+watch(
+  () => matchForm.value.time,
+  (newTime) => {
+    const now = new Date()
+    const matchTime = new Date()
+    const [hours, minutes] = newTime.split(':')
+    matchTime.setHours(parseInt(hours), parseInt(minutes), 0, 0)
+
+    const oneHourLater = new Date()
+    oneHourLater.setHours(now.getHours() - 1)
+
+    if (matchTime > oneHourLater) {
+      isScoreDisabled.value = true
+    } else {
+      isScoreDisabled.value = false
+    }
+  }
+)
 </script>
+
 
 <template>
   <div class="p-6 max-w-4xl mx-auto">
@@ -238,6 +269,7 @@ onMounted(() => {
           </label>
           <input
             v-model="matchForm.team1Score"
+            :disabled="isScoreDisabled"
             type="number"
             min="0"
             max="100"
@@ -250,6 +282,7 @@ onMounted(() => {
           </label>
           <input
             v-model="matchForm.team2Score"
+            :disabled="isScoreDisabled"
             type="number"
             min="0"
             max="100"
