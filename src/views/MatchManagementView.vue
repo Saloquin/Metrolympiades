@@ -32,6 +32,8 @@ const newActivity = ref('')
 const activities = ref([])
 const teams = ref([])
 const isScoreDisabled = ref(false)
+const calculatedStartedAt = ref(null)
+
 
 const loadData = async () => {
   try {
@@ -141,21 +143,30 @@ onMounted(() => {
 watch(
   () => matchForm.value.time,
   (newTime) => {
-    const now = new Date()
-    const matchTime = new Date()
-    const [hours, minutes] = newTime.split(':')
-    matchTime.setHours(parseInt(hours), parseInt(minutes), 0, 0)
-
-    const oneHourLater = new Date()
-    oneHourLater.setHours(now.getHours() - 1)
-
-    if (matchTime > oneHourLater) {
-      isScoreDisabled.value = true
-    } else {
+    if (!newTime) {
       isScoreDisabled.value = false
+      calculatedStartedAt.value = null
+      return
     }
+
+    const now = new Date()
+    const [hours, minutes] = newTime.split(':')
+    const matchTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), parseInt(hours), parseInt(minutes))
+    
+    const matchHour = parseInt(hours)
+    const matchMinute = parseInt(minutes)
+    const endMatchTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), matchHour + 1, matchMinute)
+    calculatedStartedAt.value = endMatchTime
+
+    const oneHourAgo = new Date()
+    oneHourAgo.setHours(now.getHours() - 1)
+
+    isScoreDisabled.value = matchTime > oneHourAgo
   }
 )
+
+
+
 </script>
 
 
@@ -260,6 +271,18 @@ watch(
           <TranslationText text="matchToday" />
         </p>
       </div>
+      
+      <p v-if="isScoreDisabled" class="text-sm text-red-600 mt-2 p-3 bg-red-100 border border-red-400 rounded-lg">
+        <TranslationText 
+          text="scoreDisabledWarning" 
+          :params="{
+            endTime: calculatedStartedAt ? calculatedStartedAt.toLocaleString(languageStore.language, { timeStyle: 'short' }) : '',
+            currentTime: new Date().toLocaleTimeString(languageStore.language, { timeStyle: 'short' })
+          }" />
+      </p>
+
+
+
 
       <!-- Score -->
       <div class="flex space-x-4">
@@ -292,12 +315,13 @@ watch(
       </div>
 
       <button
+        :disabled="!matchForm.activityId || !matchForm.team2Id || !matchForm.time || isScoreDisabled"
         type="submit"
-        class="theme-primary-bg text-white px-4 py-2 rounded-lg hover:opacity-90 transition flex items-center gap-2"
-      >
+        class="theme-primary-bg text-white px-4 py-2 rounded-lg hover:opacity-90 transition flex items-center gap-2 disabled:opacity-50">
         <FontAwesomeIcon :icon="faPlus" />
         <TranslationText text="createMatch" />
       </button>
+
     </form>
 
     <!-- Tableau des matchs -->
