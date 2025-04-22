@@ -96,6 +96,8 @@ export default {
 
   // Date Error
   
-    scoreDisabledWarning: "Les scores ne peuvent être saisis que pour les matchs terminés. Match terminé à {endTime}, heure actuelle {currentTime}."
-  
+  scoreDisabledWarning: "Les scores ne peuvent être saisis que pour les matchs terminés. Match terminé à {endTime}, heure actuelle {currentTime}.",
+  matchAlreadyExistsError: "Un match pour cette activité contre cette équipe existe déjà. Veuillez choisir une autre activité ou une autre équipe.",
+
+
 }

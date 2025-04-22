@@ -33,6 +33,8 @@ const activities = ref([])
 const teams = ref([])
 const isScoreDisabled = ref(false)
 const calculatedStartedAt = ref(null)
+const teamError = ref(false)
+
 
 
 const loadData = async () => {
@@ -66,6 +68,12 @@ const loadMatches = async () => {
 
 const createMatch = async () => {
   if (matchForm.value.activityId && matchForm.value.team2Id && matchForm.value.time) {
+
+    checkIfMatchExists()
+    if (teamError.value) {
+      return // stop here if a duplicate match is found
+    }
+
     try {
       const now = new Date()
       const matchTime = new Date()
@@ -165,6 +173,65 @@ watch(
   }
 )
 
+const checkIfMatchExists = () => {
+  const activityId = matchForm.value.activityId;
+  const team2Id = matchForm.value.team2Id;
+
+  const selectedActivity = activities.value.find(activity => activity.id === activityId);
+  const selectedTeam2 = teams.value.find(team => team.id === team2Id);
+
+  console.log('--- CHECKING IF MATCH EXISTS ---');
+  console.log('Form Values:', {
+    activityId,
+    team2Id,
+    matchTime: matchForm.value.time,
+    team1Score: matchForm.value.team1Score,
+    team2Score: matchForm.value.team2Score
+  });
+
+  console.log('Selected Activity:', selectedActivity);
+  console.log('Selected Team2:', selectedTeam2);
+  console.log('Current Team (Team1):', userStore.currentUser.team);
+  console.log('All Matches:', matches.value.map(m => ({
+    activity: m.activity,
+    team1: m.team1,
+    team2: m.team2
+  })));
+
+  if (selectedActivity && selectedTeam2) {
+    const matchExistant = matches.value.find((m) => {
+      const matchActivityName = m.activity;
+      const matchTeam2Name = m.team2;
+      const matchTeam1Name = m.team1;
+
+      const isSameActivity = matchActivityName === selectedActivity.name;
+      const isSameTeams = 
+        (matchTeam2Name === selectedTeam2.name && matchTeam1Name === userStore.currentUser.team.name) ||
+        (matchTeam2Name === userStore.currentUser.team.name && matchTeam1Name === selectedTeam2.name);
+
+      return isSameActivity && isSameTeams;
+    });
+
+    teamError.value = !!matchExistant;
+    console.log('Match trouvé ?', matchExistant ? matchExistant : 'Aucun match existant');
+  } else {
+    teamError.value = false;
+    console.log('Pas assez d’informations pour vérifier le match');
+  }
+
+  console.log('teamError:', teamError.value);
+  console.log('--------------------------------');
+};
+
+
+
+watch(
+  () => [matchForm.value.activityId, matchForm.value.team2Id],
+  () => {
+    checkIfMatchExists();
+  }
+);
+
 
 
 </script>
@@ -255,6 +322,9 @@ watch(
           <option value="">{{ languageStore.translate('chooseTeam') }}</option>
           <option v-for="team in teams" :key="team.id" :value="team.id">{{ team.name }}</option>
         </select>
+        <p v-if="teamError === true" class="text-sm text-red-600 mt-2 p-3 bg-red-100 border border-red-400 rounded-lg">
+          <TranslationText text="matchAlreadyExistsError" />
+        </p>
       </div>
 
       <div>
@@ -315,7 +385,7 @@ watch(
       </div>
 
       <button
-        :disabled="!matchForm.activityId || !matchForm.team2Id || !matchForm.time || isScoreDisabled"
+        :disabled="!matchForm.activityId || !matchForm.team2Id || !matchForm.time || isScoreDisabled || teamError === true"
         type="submit"
         class="theme-primary-bg text-white px-4 py-2 rounded-lg hover:opacity-90 transition flex items-center gap-2 disabled:opacity-50">
         <FontAwesomeIcon :icon="faPlus" />
