@@ -150,6 +150,14 @@ const handleDropdownHover = (dropdown, isHovered) => {
                   <TranslationText text="manageMatches" />
                 </RouterLink>
               </li>
+              <li>
+                <RouterLink
+                  to="/manage-activities"
+                  class="block px-4 py-2 text-gray-700 hover:text-primary hover:bg-gray-100 transition-colors duration-150"
+                >
+                  <TranslationText text="manageActivities" />
+                </RouterLink>
+              </li>
             </ul>
           </div>
         </div>
@@ -236,6 +244,13 @@ const handleDropdownHover = (dropdown, isHovered) => {
                 @click="showMobileMenu = false"
               >
                 <TranslationText text="manageMatches" />
+              </RouterLink>
+              <RouterLink
+                to="/manage-activities"
+                class="block pl-4 py-2 text-gray-600 hover:theme-primary"
+                @click="showMobileMenu = false"
+              >
+                <TranslationText text="manageActivities" />
               </RouterLink>
             </div>
           </template>
