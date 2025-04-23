@@ -94,5 +94,7 @@ export default {
   noMembers: 'Nessun membro nella squadra',
 
   // Date Error
-  scoreDisabledWarning: "I punteggi possono essere inseriti solo per le partite terminate. La partita è terminata alle {endTime}, ora attuale {currentTime}."
+  scoreDisabledWarning: "I punteggi possono essere inseriti solo per le partite terminate. La partita è terminata alle {endTime}, ora attuale {currentTime}.",
+  matchAlreadyExistsError: "Esiste già una partita per questa attività contro questa squadra. Scegli un'altra attività o un'altra squadra.",
+
 }

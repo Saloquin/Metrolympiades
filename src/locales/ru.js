@@ -94,5 +94,7 @@ export default {
     noMembers: 'В команде нет участников',
 
     // Date Error
-    scoreDisabledWarning: "Очки можно вводить только для завершенных матчей. Игра завершена в {endTime}, текущее время {currentTime}."
+    scoreDisabledWarning: "Очки можно вводить только для завершенных матчей. Игра завершена в {endTime}, текущее время {currentTime}.",
+    matchAlreadyExistsError: "Матч по этой активности с этой командой уже существует. Пожалуйста, выберите другую активность или команду.",
+
   }

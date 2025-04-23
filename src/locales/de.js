@@ -94,5 +94,7 @@ export default {
   noMembers: 'Keine Mitglieder im Team',
 
   // Date Error
-  scoreDisabledWarning: "Punkte können nur für abgeschlossene Spiele eingegeben werden. Das Spiel endete um {endTime}, aktuelle Uhrzeit {currentTime}."
+  scoreDisabledWarning: "Punkte können nur für abgeschlossene Spiele eingegeben werden. Das Spiel endete um {endTime}, aktuelle Uhrzeit {currentTime}.",
+  matchAlreadyExistsError: "Ein Spiel für diese Aktivität gegen dieses Team existiert bereits. Bitte wählen Sie eine andere Aktivität oder ein anderes Team.",
+
 }

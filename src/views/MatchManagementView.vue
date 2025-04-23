@@ -192,24 +192,6 @@ const checkIfMatchExists = () => {
   const selectedActivity = activities.value.find(activity => activity.id === activityId);
   const selectedTeam2 = teams.value.find(team => team.id === team2Id);
 
-  console.log('--- CHECKING IF MATCH EXISTS ---');
-  console.log('Form Values:', {
-    activityId,
-    team2Id,
-    matchTime: matchForm.value.time,
-    team1Score: matchForm.value.team1Score,
-    team2Score: matchForm.value.team2Score
-  });
-
-  console.log('Selected Activity:', selectedActivity);
-  console.log('Selected Team2:', selectedTeam2);
-  console.log('Current Team (Team1):', userStore.currentUser.team);
-  console.log('All Matches:', matches.value.map(m => ({
-    activity: m.activity,
-    team1: m.team1,
-    team2: m.team2
-  })));
-
   if (selectedActivity && selectedTeam2) {
     const matchExistant = matches.value.find((m) => {
       const matchActivityName = m.activity;
@@ -225,14 +207,9 @@ const checkIfMatchExists = () => {
     });
 
     teamError.value = !!matchExistant;
-    console.log('Match trouvé ?', matchExistant ? matchExistant : 'Aucun match existant');
   } else {
     teamError.value = false;
-    console.log('Pas assez d’informations pour vérifier le match');
   }
-
-  console.log('teamError:', teamError.value);
-  console.log('--------------------------------');
 };
 
 

@@ -94,5 +94,7 @@ export default {
     noMembers: '팀에 멤버가 없습니다',
 
     // Date Error
-    scoreDisabledWarning: "점수는 종료된 경기에서만 입력할 수 있습니다. 경기는 {endTime}에 종료되었으며, 현재 시간은 {currentTime}입니다."
+    scoreDisabledWarning: "점수는 종료된 경기에서만 입력할 수 있습니다. 경기는 {endTime}에 종료되었으며, 현재 시간은 {currentTime}입니다.",
+    matchAlreadyExistsError: "이 활동에 대해 이 팀과의 경기가 이미 존재합니다. 다른 활동이나 팀을 선택하세요.",
+
   }

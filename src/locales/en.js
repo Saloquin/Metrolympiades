@@ -94,5 +94,7 @@ export default {
   noMembers: 'No members in the team',
 
   // Date Error
-  scoreDisabledWarning: "Scores can only be entered for completed matches. Match ended at {endTime}, current time {currentTime}."
+  scoreDisabledWarning: "Scores can only be entered for completed matches. Match ended at {endTime}, current time {currentTime}.",
+  matchAlreadyExistsError: "A match for this activity against this team already exists. Please choose a different activity or team.",
+
 }

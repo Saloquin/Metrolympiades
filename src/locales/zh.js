@@ -94,5 +94,7 @@ export default {
     noMembers: '团队中没有成员',
 
     // Date Error
-    scoreDisabledWarning: "只有在比赛结束后才能输入分数。比赛结束时间：{endTime}，当前时间：{currentTime}。"
+    scoreDisabledWarning: "只有在比赛结束后才能输入分数。比赛结束时间：{endTime}，当前时间：{currentTime}。",
+    matchAlreadyExistsError: "此活动与该队的比赛已存在。请选择其他活动或队伍。",
+
   }

@@ -94,5 +94,7 @@ export default {
     noMembers: 'チームにメンバーがいません',
 
     // Date Error
-    scoreDisabledWarning: "スコアは終了した試合のみ入力できます。試合終了時間：{endTime}、現在の時間：{currentTime}。"
+    scoreDisabledWarning: "スコアは終了した試合のみ入力できます。試合終了時間：{endTime}、現在の時間：{currentTime}。",
+    matchAlreadyExistsError: "このアクティビティでこのチームとの試合はすでに存在します。別のアクティビティまたはチームを選んでください。",
+
   }
