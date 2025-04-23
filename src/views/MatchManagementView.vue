@@ -71,7 +71,7 @@ const createMatch = async () => {
 
     checkIfMatchExists()
     if (teamError.value) {
-      return // stop here if a duplicate match is found
+      return 
     }
 
     try {
@@ -100,7 +100,19 @@ const createMatch = async () => {
           team2Score: matchForm.value.team2Score
         })
       })
-      loadMatches()
+      await loadMatches()
+
+      //Réinitialiser le formulaire
+      matchForm.value = {
+        activityId: '',
+        team2Id: '',
+        time: '',
+        team1Score: 0,
+        team2Score: 0
+      }
+      teamError.value = false
+      calculatedStartedAt.value = null
+
     } catch (error) {
       console.error('Error creating match:', error)
     }
