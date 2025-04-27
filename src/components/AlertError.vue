@@ -3,6 +3,16 @@ import { faXmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import TranslationText from './traductions/TranslationText.vue'
 
+const props = defineProps({
+  isVisible: {
+    type: Boolean,
+    required: true
+  },
+  message: {
+    type: String,
+    required: true
+  }
+})
 
 const emit = defineEmits(['close'])
 
