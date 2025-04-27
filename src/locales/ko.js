@@ -63,6 +63,7 @@ export default {
     noMatchesFound: '경기를 찾을 수 없습니다',
   
     //Match Management
+    viewMyMatches: "내 경기를 보기",
     manageActivities: '활동 관리',
     addActivity: '활동 추가',
     currentActivities: '현재 활동',

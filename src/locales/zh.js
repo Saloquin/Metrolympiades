@@ -63,6 +63,7 @@ export default {
     noMatchesFound: '未找到比赛',
   
     //Match Management
+    viewMyMatches: "查看我的比赛",
     manageActivities: '管理活动',
     addActivity: '添加活动',
     currentActivities: '当前活动',
