@@ -4,7 +4,7 @@ import MatchCard from '@/components/card/MatchCard.vue'
 import TranslationText from '@/components/traductions/TranslationText.vue'
 import { useLanguageStore } from '@/stores/language'
 import { useUserStore } from '@/stores/user'
-import { faList, faPlus, faSoccerBall, faTrash } from '@fortawesome/free-solid-svg-icons'
+import { faList, faPlus, faSoccerBall, faTrash,faCalendarDays } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { onMounted, ref, watch } from 'vue'
 
@@ -237,7 +237,7 @@ watch(
         </div>
         <RouterLink
           to="/matches"
-          class="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition flex items-center gap-2"
+          class="theme-primary-bg text-white px-4 py-2 rounded-lg hover:opacity-90 transition flex items-center gap-2"
         >
           <FontAwesomeIcon :icon="faCalendarDays" />
           <TranslationText text="viewMyMatches" />
