@@ -7,11 +7,15 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import ActivityCard from '@/components/card/ActivityCard.vue'
 
+// Access user authentication token
 const userStore = useUserStore()
+
+// Access current language settings
 const languageStore = useLanguageStore()
 const activities = ref([])
 const newActivity = ref('')
 
+// Fetch all activities from the API
 const loadActivities = async () => {
   try {
     const activityData = await fetchApi('/activities', {
@@ -23,6 +27,7 @@ const loadActivities = async () => {
   }
 }
 
+// Add a new activity to the list
 const addActivity = async () => {
   if (newActivity.value.trim()) {
     try {

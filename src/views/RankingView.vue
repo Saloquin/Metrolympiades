@@ -9,6 +9,7 @@ import RankingCard from '@/components/card/RankingCard.vue'
 const userStore = useUserStore()
 const ranking = ref([])
 
+// Fetch the ranking from the API
 const loadRanking = async () => {
   try {
     const rankingData = await fetchApi('/ranking', {
