@@ -27,4 +27,3 @@ Installer et lancer l'api : https://github.com/ClementCatel/metrolympiades-api
 - Vue.js 3
 - Vue Router
 - Vite
-- [Autres dépendances...]
