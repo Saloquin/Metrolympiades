@@ -15,7 +15,6 @@ const userStore = useUserStore()
 const themeStore = useThemeStore()
 const router = useRouter()
 
-// Fonction d'inscription
 const register = async () => {
   try {
     const teams = await fetchApi('/teams', { method: 'GET' })

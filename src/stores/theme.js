@@ -19,7 +19,6 @@ export const useThemeStore = defineStore('theme', {
     },
     initializeFontSizeOnly() {
       this.setFontSize(localStorage.getItem('fontSize') || DEFAULT_THEME.fontSize)
-      // Use default colors
       this.setTempPrimaryColor(DEFAULT_THEME.primaryColor)
       this.setTempSecondaryColor(DEFAULT_THEME.secondaryColor)
     },

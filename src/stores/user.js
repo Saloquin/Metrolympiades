@@ -7,7 +7,6 @@ export const useUserStore = defineStore('user', {
     isLoggedIn: false,
   }),
   actions: {
-    // Lors de l'initialisation, on vérifie si un utilisateur et un token existent dans localStorage
     initializeUser() {
       if (this.currentUser && this.token) {
         this.isLoggedIn = true

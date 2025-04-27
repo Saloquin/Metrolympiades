@@ -15,7 +15,6 @@ const loadMatches = async () => {
     const matchData = await fetchApi('/matches/me', {
       headers: { Authorization: `Bearer ${userStore.token}` }
     })
-    // Sort matches by date (oldest first)
     matches.value = matchData.sort((a, b) => new Date(a.startedAt) - new Date(b.startedAt))
   } catch (error) {
     console.error('Error loading matches:', error)

@@ -43,7 +43,7 @@ const handleDropdownHover = (dropdown, isHovered) => {
       } else if (dropdown === 'manage') {
         showManageDropdown.value = false
       }
-    }, 150) // Délai de 150ms avant de fermer
+    }, 150)
   }
 }
 </script>

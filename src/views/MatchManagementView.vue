@@ -92,7 +92,6 @@ const createMatch = async () => {
       })
       await loadMatches()
 
-      //Réinitialiser le formulaire
       matchForm.value = {
         activityId: '',
         team2Id: '',

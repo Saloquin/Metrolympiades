@@ -30,12 +30,10 @@ onMounted(async () => {
   }
 })
 
-// Fonction pour calculer le nombre de victoires
 const calculateVictories = (matches) => {
   let winCount = 0
 
   matches.forEach((match) => {
-    // Vérifier si l'équipe est team1 ou team2
     if (team.value.name === match.team1 && match.team1Score > match.team2Score) {
       winCount += 1
     } else if (team.value.name === match.team2 && match.team2Score > match.team1Score) {

@@ -60,8 +60,6 @@ const resetSettings = () => {
           <FontAwesomeIcon :icon="faRotateLeft" />
         </button>
       </div>
-
-      <!-- Color settings only shown when logged in -->
       <template v-if="showColorSettings">
         <div class="mb-4">
           <label class="block text-sm font-medium mb-2">
@@ -87,8 +85,6 @@ const resetSettings = () => {
           />
         </div>
       </template>
-
-      <!-- Font size settings always visible -->
       <div class="mb-4">
         <label class="block text-sm font-medium mb-2">
           <FontAwesomeIcon :icon="faTextHeight" class="mr-2" />

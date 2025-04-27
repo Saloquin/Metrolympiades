@@ -58,13 +58,11 @@ const updateTeamName = async () => {
 
   if (trimmedName) {
     try {
-      // Récupération de toutes les équipes
       const teams = await fetchApi('/teams', {
         method: 'GET',
         headers: { Authorization: `Bearer ${userStore.token}` }
       })
 
-      // Vérifie si le nom est déjà pris par une autre équipe
       const isTaken = teams.some(team =>
         team.name.toLowerCase() === trimmedName.toLowerCase() &&
         team.id !== userStore.currentUser.team.id 
@@ -75,7 +73,6 @@ const updateTeamName = async () => {
         return
       }
 
-      // Mise à jour du nom de l'équipe
       await fetchApi('/teams/me', {
         method: 'PUT',
         headers: { Authorization: `Bearer ${userStore.token}` },
@@ -85,7 +82,7 @@ const updateTeamName = async () => {
       team.value.name = trimmedName
       userStore.currentUser.team.name = trimmedName
     } catch (error) {
-      
+      // Erreur lors de la mise à jour du nom de l'équipe
     }
   }
 }
