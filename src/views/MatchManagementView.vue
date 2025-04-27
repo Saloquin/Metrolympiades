@@ -236,13 +236,13 @@ watch(
             <TranslationText text="matchManagement" />
           </h2>
         </div>
-        <!-- <RouterLink
+        <RouterLink
           to="/matches"
           class="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition flex items-center gap-2"
         >
           <FontAwesomeIcon :icon="faCalendarDays" />
           <TranslationText text="viewMyMatches" />
-        </RouterLink>-->
+        </RouterLink>
       </div>
 
       <!-- FORMULAIRE pour créer un match -->
