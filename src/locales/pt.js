@@ -63,6 +63,7 @@ export default {
     noMatchesFound: 'Nenhuma partida encontrada',
   
     //Match Management
+    viewMyMatches: "Ver minhas partidas",
     manageActivities: 'Gerenciar Atividades',
     addActivity: 'Adicionar Atividade',
     currentActivities: 'Atividades Atuais',

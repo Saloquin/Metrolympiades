@@ -30,10 +30,13 @@ const team = ref(userStore.currentUser?.team)
 const selectedMatch = ref(null)
 const showModal = ref(false)
 
+// Open match details modal
 const openMatchModal = (event) => {
   selectedMatch.value = event.originalMatch
   showModal.value = true
 }
+
+// Close match details modal
 const closeMatchModal = () => {
   selectedMatch.value = null
   showModal.value = false
@@ -44,6 +47,7 @@ const calendarEvents = ref([])
 const today = new Date()
 const isTodayView = ref(true)
 
+// Handle calendar view change (prevent navigating to the future)
 const handleViewChange = ({ startDate }) => {
   const selectedDate = new Date(startDate)
   const todayDate = new Date(today)
@@ -57,6 +61,7 @@ const handleViewChange = ({ startDate }) => {
 
 const vueCalRef = ref(null)
 
+// Enable or disable right arrow in calendar depending on the view
 const updateArrowState = (isToday) => {
   const nextArrow = document.querySelector('.vuecal__arrow--next')
   if (nextArrow) {
@@ -68,6 +73,7 @@ const updateArrowState = (isToday) => {
   }
 }
 
+// Fetch user matches and update states
 onMounted(async () => {
   if (userStore.currentUser) {
     try {
@@ -123,6 +129,7 @@ onMounted(async () => {
 })
 
 
+// Watch calendar view and update arrows
 watch(isTodayView, (newVal) => {
   updateArrowState(newVal)
 })

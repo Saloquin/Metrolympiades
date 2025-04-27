@@ -63,6 +63,7 @@ export default {
     noMatchesFound: '試合が見つかりません',
   
     //Match Management
+    viewMyMatches: "私の試合を見る",
     manageActivities: 'アクティビティ管理',
     addActivity: 'アクティビティを追加',
     currentActivities: '現在のアクティビティ',

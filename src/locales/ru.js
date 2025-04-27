@@ -63,6 +63,7 @@ export default {
     noMatchesFound: 'Матчи не найдены',
   
     //Match Management
+    viewMyMatches: "Посмотреть мои матчи",
     manageActivities: 'Управление активностями',
     addActivity: 'Добавить активность',
     currentActivities: 'Текущие активности',
