@@ -51,6 +51,7 @@ export default {
   password: 'Password',
   noAccount: 'Don’t have an account yet? ',
   createAccount: 'Create an account',
+  loginError: 'Invalid email or password',
 
   // Register
   username: 'Username',
@@ -97,5 +98,14 @@ export default {
   // Date Error
   scoreDisabledWarning: "Scores can only be entered for completed matches. Match ended at {endTime}, current time {currentTime}.",
   matchAlreadyExistsError: "A match for this activity against this team already exists. Please choose a different activity or team.",
+  teamNameTaken: "This team name is already taken. Please choose another one.",
 
+  // API Errors
+  error400: 'Invalid request',
+  error401: 'Unauthorized - please log in',
+  error403: 'Access denied',
+  error404: 'Resource not found',
+  error500: 'Internal server error',
+  error502: 'Service temporarily unavailable',
+  error503: 'Service unavailable',
 }

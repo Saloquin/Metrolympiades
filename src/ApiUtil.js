@@ -1,6 +1,10 @@
+import { useErrorStore } from '@/stores/error'
+
 const API_BASE_URL = 'http://localhost:3000'
 
 export const fetchApi = async (endpoint, options = {}) => {
+  const errorStore = useErrorStore()
+
   try {
     const defaultHeaders = {
       'Content-Type': 'application/json'
@@ -19,9 +23,9 @@ export const fetchApi = async (endpoint, options = {}) => {
 
     if (!response.ok) {
       if (data.message) {
-        alert(data.message)
+        errorStore.showErrorMessage(data.message)
       } else {
-        alert(`Erreur ${response.status}`)
+        errorStore.showErrorMessage(`error${response.status}`)
       }
       throw new Error(data.message || `HTTP error! status: ${response.status}`)
     }

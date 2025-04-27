@@ -1,16 +1,18 @@
 <script setup>
-import { ref } from 'vue'
 import { fetchApi } from '@/ApiUtil'
-import { useUserStore } from '@/stores/user'
+import AlertError from '@/components/AlertError.vue'
 import { useThemeStore } from '@/stores/theme'
-import { useRouter } from 'vue-router'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { useUserStore } from '@/stores/user'
 import { faBoltLightning } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 const email = ref('')
 const username = ref('')
 const password = ref('')
 const teamName = ref('')
+const showError = ref(false)
 const userStore = useUserStore()
 const themeStore = useThemeStore()
 const router = useRouter()
@@ -19,10 +21,15 @@ const register = async () => {
   try {
     const teams = await fetchApi('/teams', { method: 'GET' })
 
-    const isTeamNameTaken = teams.some(team => team.name.toLowerCase() === teamName.value.trim().toLowerCase())
+    const isTeamNameTaken = teams.some(
+      (team) => team.name.toLowerCase() === teamName.value.trim().toLowerCase()
+    )
 
     if (isTeamNameTaken) {
-      alert('Ce nom d’équipe est déjà pris. Veuillez en choisir un autre.')
+      showError.value = true
+      setTimeout(() => {
+        showError.value = false
+      }, 5000)
       return
     }
 
@@ -49,10 +56,15 @@ const register = async () => {
     // Afficher une alerte ou un message d'erreur
   }
 }
+
+const closeError = () => {
+  showError.value = false
+}
 </script>
 
 <template>
   <div class="max-w-md mx-auto mt-10 bg-white shadow-lg rounded-lg p-6">
+    <AlertError message="teamNameTaken" :is-visible="showError" @close="closeError" />
     <h2 class="text-3xl font-bold text-center text-blue-600 mb-6">
       <TranslationText text="register" />
     </h2>

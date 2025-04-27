@@ -51,6 +51,7 @@ export default {
   password: 'Mot de passe',
   noAccount: 'Pas encore de compte ? ',
   createAccount: 'Créer un compte',
+  loginError: 'Email ou mot de passe invalide',
 
   // Register
   username: "Nom d'utilisateur",
@@ -94,11 +95,17 @@ export default {
   addMember: "Ajouter un membre",
   noMembers: "Aucun membre dans l'équipe",
 
-
   // Date Error
-  
   scoreDisabledWarning: "Les scores ne peuvent être saisis que pour les matchs terminés. Match terminé à {endTime}, heure actuelle {currentTime}.",
   matchAlreadyExistsError: "Un match pour cette activité contre cette équipe existe déjà. Veuillez choisir une autre activité ou une autre équipe.",
+  teamNameTaken: "Ce nom d'équipe est déjà pris. Veuillez en choisir un autre.",
 
-
+  // API Errors
+  error400: 'Requête invalide',
+  error401: 'Non autorisé - veuillez vous connecter',
+  error403: 'Accès refusé',
+  error404: 'Ressource non trouvée',
+  error500: 'Erreur serveur interne',
+  error502: 'Service temporairement indisponible',
+  error503: 'Service indisponible',
 }
